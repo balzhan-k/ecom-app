@@ -14,9 +14,19 @@ import { del } from "@vercel/blob";
 import { productSchema } from "@/validations/productSchema";
 import { ProductFormState } from "@/components/admin/ProductForm";
 import { Product } from "@/types/product";
-import { extractFormData, convertRawDataToInputs, removeUndefined } from "@/utils/productForm";
-
-
+import {
+  extractFormData,
+  convertRawDataToInputs,
+  removeUndefined,
+} from "@/utils/productForm";
+import {
+  buildMetaForCreate,
+  buildMetaForUpdate,
+  buildFinalDocument,
+  makeSuccessState,
+  makeErrorState,
+  ensureUniqueTitleOrError,
+} from "./helpers";
 
 export async function AddNewProductAction(
   currentState: ProductFormState,
@@ -35,26 +45,23 @@ export async function AddNewProductAction(
     const errors = result.error.flatten().fieldErrors;
     console.error("Validation errors:", errors);
 
-    return {
-      success: false,
-      message: "Please correct the form input",
-      inputs: convertRawDataToInputs(rawData),
-      errors,
-    };
+    return makeErrorState(
+      "Please correct the form input",
+      convertRawDataToInputs(rawData),
+      errors
+    );
   }
 
   if (result.data.images.length === 0) {
-    return {
-      success: false,
-      message: "At least one image is required.",
-      inputs: result.data,
-      errors: { images: ["At least one image is required."] },
-    };
+    return makeErrorState("At least one image is required.", result.data, {
+      images: ["At least one image is required."],
+    });
   }
 
   try {
     if (isEditMode) {
-      const existingProductDoc = doc(db, collections.products, rawData.id);
+      const productId = rawData.id as string;
+      const existingProductDoc = doc(db, collections.products, productId);
       const existingProductSnap = await getDoc(existingProductDoc);
 
       if (!existingProductSnap.exists()) {
@@ -68,115 +75,75 @@ export async function AddNewProductAction(
 
       const existingProduct = existingProductSnap.data() as Product;
       if (existingProduct.title !== result.data.title) {
-        const productsRef = collection(db, collections.products);
-        const q = query(productsRef, where("title", "==", result.data.title));
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-          return {
-            success: false,
-            message: "A product with this title already exists.",
-            inputs: result.data,
-            errors: { title: ["A product with this title already exists."] },
-          };
-        }
+        const dup = await ensureUniqueTitleOrError(
+          result.data.title,
+          productId,
+          result.data
+        );
+        if (dup) return dup;
       }
 
       const cleanData = removeUndefined(result.data);
-
-      const documentData = {
-        ...cleanData,
-        meta: {
-          createdAt: existingProduct.meta?.createdAt || serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        },
-        id: rawData.id,
-      };
-
-      const finalData = removeUndefined(documentData);
+      const meta = buildMetaForUpdate(existingProduct.meta?.createdAt);
+      const finalData = buildFinalDocument(cleanData, productId, meta);
 
       console.log(
         "Updating product in Firebase:",
         JSON.stringify(finalData, null, 2)
       );
 
-      await setDoc(doc(db, collections.products, rawData.id), finalData);
+      await setDoc(doc(db, collections.products, productId), finalData);
 
-      return {
-        success: true,
-        message: "The product is updated successfully",
-        inputs: {
-          ...result.data,
-          meta: {
-            createdAt:
-              existingProduct.meta?.createdAt || new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-          id: rawData.id,
+      return makeSuccessState("The product is updated successfully", {
+        ...result.data,
+        meta: {
+          createdAt:
+            existingProduct.meta?.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         },
-      };
+        id: productId,
+      });
     } else {
       const id = Date.now().toString();
 
-      const productsRef = collection(db, collections.products);
-      const q = query(productsRef, where("title", "==", result.data.title));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        return {
-          success: false,
-          message: "Product with this title already exists.",
-          inputs: result.data,
-          errors: { title: ["A product with this title already exists."] },
-        };
-      }
+      const dup = await ensureUniqueTitleOrError(
+        result.data.title,
+        undefined,
+        result.data
+      );
+      if (dup) return dup;
 
       const cleanData = removeUndefined(result.data);
-
-      const documentData = {
-        ...cleanData,
-        meta: {
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        },
-        id,
-      };
-
-      const finalData = removeUndefined(documentData);
-
+      const meta = buildMetaForCreate();
+      const finalData = buildFinalDocument(cleanData, id, meta);
 
       await setDoc(doc(db, collections.products, id), finalData);
 
-      return {
-        success: true,
-        message: "The product is created successfully",
-        inputs: {
-          ...result.data,
-          meta: {
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-          id,
-        },
-      };
-    }
-  } catch (err) {
-    console.error("Error saving product to Firebase", err);
-
-    return {
-      success: false,
-      message: isEditMode
-        ? "Failed updating the product in the database"
-        : "Failed creating a new product in the database",
-      inputs: {
+      return makeSuccessState("The product is created successfully", {
         ...result.data,
         meta: {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
-          id: isEditMode ? rawData.id : undefined,
-      },
-    };
+        id,
+      });
+    }
+  } catch (err) {
+    console.error("Error saving product to Firebase", err);
+
+    return makeErrorState(
+      isEditMode
+        ? "Failed updating the product in the database"
+        : "Failed creating a new product in the database",
+      {
+        ...result.data,
+        meta: {
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        id: isEditMode ? rawData.id : undefined,
+      }
+    );
   }
 }
 
@@ -210,9 +177,10 @@ export async function DeleteProductAction(
       errors: { id: ["Product ID is required"] },
     };
   }
+  const productId = rawData.id as string;
 
   try {
-    const productDoc = doc(db, collections.products, rawData.id);
+    const productDoc = doc(db, collections.products, productId);
     const productSnap = await getDoc(productDoc);
 
     if (!productSnap.exists()) {
