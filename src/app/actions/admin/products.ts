@@ -1,15 +1,5 @@
 import { collections, db } from "@/lib/firebase";
-import {
-  collection,
-  setDoc,
-  doc,
-  getDocs,
-  getDoc,
-  deleteDoc,
-  query,
-  where,
-  serverTimestamp,
-} from "firebase/firestore";
+import { setDoc, doc, getDoc, deleteDoc } from "firebase/firestore";
 import { del } from "@vercel/blob";
 import { productSchema } from "@/validations/productSchema";
 import { ProductFormState } from "@/components/admin/ProductForm";
@@ -27,6 +17,7 @@ import {
   makeErrorState,
   ensureUniqueTitleOrError,
 } from "./helpers";
+import { stripe } from "@/lib/stripe";
 
 export async function AddNewProductAction(
   currentState: ProductFormState,
@@ -115,7 +106,29 @@ export async function AddNewProductAction(
 
       const cleanData = removeUndefined(result.data);
       const meta = buildMetaForCreate();
-      const finalData = buildFinalDocument(cleanData, id, meta);
+
+      const stripeProduct = await stripe.products.create({
+        name: result.data.title,
+        description: result.data.description,
+        images: result.data.images,
+      });
+
+      const priceInCents = Math.round(result.data.price * 100);
+      const stripePrice = await stripe.prices.create({
+        unit_amount: priceInCents,
+        currency: "usd",
+        product: stripeProduct.id,
+      });
+
+      const finalData = buildFinalDocument(
+        {
+          ...cleanData,
+          stripeProductId: stripeProduct.id,
+          stripePriceId: stripePrice.id,
+        },
+        id,
+        meta
+      );
 
       await setDoc(doc(db, collections.products, id), finalData);
 
