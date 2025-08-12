@@ -1,3 +1,6 @@
+"use server";
+import "server-only";
+
 import { collections, db } from "@/lib/firebase";
 import { setDoc, doc, getDoc, deleteDoc } from "firebase/firestore";
 import { del } from "@vercel/blob";
@@ -17,6 +20,7 @@ import {
   makeErrorState,
   ensureUniqueTitleOrError,
 } from "./helpers";
+import { toCents } from "@/utils/formatters";
 import { stripe } from "@/lib/stripe";
 
 export async function AddNewProductAction(
@@ -26,16 +30,10 @@ export async function AddNewProductAction(
   const rawData = extractFormData(formData);
   const isEditMode = !!rawData.id;
 
-  console.log("Raw data from form:", rawData);
-  console.log("Mode:", isEditMode ? "edit" : "create");
-  console.log("Product ID:", rawData.id);
-
   const result = productSchema.safeParse(rawData);
 
   if (!result.success) {
     const errors = result.error.flatten().fieldErrors;
-    console.error("Validation errors:", errors);
-
     return makeErrorState(
       "Please correct the form input",
       convertRawDataToInputs(rawData),
@@ -65,6 +63,7 @@ export async function AddNewProductAction(
       }
 
       const existingProduct = existingProductSnap.data() as Product;
+
       if (existingProduct.title !== result.data.title) {
         const dup = await ensureUniqueTitleOrError(
           result.data.title,
@@ -76,11 +75,49 @@ export async function AddNewProductAction(
 
       const cleanData = removeUndefined(result.data);
       const meta = buildMetaForUpdate(existingProduct.meta?.createdAt);
-      const finalData = buildFinalDocument(cleanData, productId, meta);
 
-      console.log(
-        "Updating product in Firebase:",
-        JSON.stringify(finalData, null, 2)
+      // Stripe: обновление/создание Product
+      let stripeProductId = (existingProduct as any).stripeProductId as
+        | string
+        | undefined;
+
+      if (stripeProductId) {
+        await stripe.products.update(stripeProductId, {
+          name: result.data.title,
+          description: result.data.description,
+          images: result.data.images?.slice(0, 8),
+        });
+      } else {
+        const stripeProduct = await stripe.products.create({
+          name: result.data.title,
+          description: result.data.description,
+          images: result.data.images?.slice(0, 8),
+        });
+        stripeProductId = stripeProduct.id;
+      }
+
+      // Stripe: создание новой Price при изменении цены
+      let stripePriceId = (existingProduct as any).stripePriceId as
+        | string
+        | undefined;
+
+      const priceInCents = toCents(result.data.price);
+      const priceChanged =
+        !stripePriceId || existingProduct.price !== result.data.price;
+
+      if (priceChanged) {
+        const stripePrice = await stripe.prices.create({
+          unit_amount: priceInCents,
+          currency: "usd",
+          product: stripeProductId!,
+        });
+        stripePriceId = stripePrice.id;
+      }
+
+      const finalData = buildFinalDocument(
+        { ...cleanData, stripeProductId, stripePriceId },
+        productId,
+        meta
       );
 
       await setDoc(doc(db, collections.products, productId), finalData);
@@ -88,8 +125,7 @@ export async function AddNewProductAction(
       return makeSuccessState("The product is updated successfully", {
         ...result.data,
         meta: {
-          createdAt:
-            existingProduct.meta?.createdAt || new Date().toISOString(),
+          createdAt: existingProduct.meta?.createdAt || new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
         id: productId,
@@ -107,13 +143,15 @@ export async function AddNewProductAction(
       const cleanData = removeUndefined(result.data);
       const meta = buildMetaForCreate();
 
+      // Stripe: создание Product
       const stripeProduct = await stripe.products.create({
         name: result.data.title,
         description: result.data.description,
-        images: result.data.images,
+        images: result.data.images?.slice(0, 8),
       });
 
-      const priceInCents = Math.round(result.data.price * 100);
+      // Stripe: создание Price
+      const priceInCents = toCents(result.data.price);
       const stripePrice = await stripe.prices.create({
         unit_amount: priceInCents,
         currency: "usd",

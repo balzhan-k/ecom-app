@@ -53,3 +53,9 @@ export function getProductDisplayTitle(product: {
 }): string {
   return `${product.brand}. ${product.title}`;
 }
+
+
+export function toCents(price: number | undefined): number {
+  if (typeof price !== "number") return 0;
+  return Math.round(price * 100);
+}
