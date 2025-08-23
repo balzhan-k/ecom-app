@@ -115,7 +115,7 @@ export function convertRawDataToInputs(rawData: RawProductFormData) {
   };
 }
 
-export function removeUndefined(obj: unknown): any {
+export function removeUndefined(obj: unknown): unknown {
   if (obj === undefined || obj === null) return undefined;
   if (Array.isArray(obj))
     return obj.map(removeUndefined).filter((item) => item !== undefined);
