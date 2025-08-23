@@ -77,9 +77,11 @@ export async function AddNewProductAction(
       const meta = buildMetaForUpdate(existingProduct.meta?.createdAt);
 
       // Stripe: обновление/создание Product
-      let stripeProductId = (existingProduct as any).stripeProductId as
-        | string
-        | undefined;
+      let stripeProductId = (
+        existingProduct as Product & {
+          stripeProductId?: string;
+        }
+      ).stripeProductId;
 
       if (stripeProductId) {
         await stripe.products.update(stripeProductId, {
@@ -97,9 +99,11 @@ export async function AddNewProductAction(
       }
 
       // Stripe: создание новой Price при изменении цены
-      let stripePriceId = (existingProduct as any).stripePriceId as
-        | string
-        | undefined;
+      let stripePriceId = (
+        existingProduct as Product & {
+          stripePriceId?: string;
+        }
+      ).stripePriceId;
 
       const priceInCents = toCents(result.data.price);
       const priceChanged =
@@ -115,7 +119,11 @@ export async function AddNewProductAction(
       }
 
       const finalData = buildFinalDocument(
-        { ...cleanData, stripeProductId, stripePriceId },
+        {
+          ...(cleanData as Record<string, unknown>),
+          stripeProductId,
+          stripePriceId,
+        },
         productId,
         meta
       );
@@ -125,7 +133,8 @@ export async function AddNewProductAction(
       return makeSuccessState("The product is updated successfully", {
         ...result.data,
         meta: {
-          createdAt: existingProduct.meta?.createdAt || new Date().toISOString(),
+          createdAt:
+            existingProduct.meta?.createdAt || new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
         id: productId,
@@ -160,7 +169,7 @@ export async function AddNewProductAction(
 
       const finalData = buildFinalDocument(
         {
-          ...cleanData,
+          ...(cleanData as Record<string, unknown>),
           stripeProductId: stripeProduct.id,
           stripePriceId: stripePrice.id,
         },

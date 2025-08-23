@@ -23,7 +23,11 @@ export function buildMetaForUpdate(existingCreatedAt?: unknown) {
   };
 }
 
-export function buildFinalDocument(cleanData: any, id: string, meta: any) {
+export function buildFinalDocument(
+  cleanData: Record<string, unknown>,
+  id: string,
+  meta: Record<string, unknown>
+) {
   return removeUndefined({
     ...cleanData,
     meta,
@@ -33,7 +37,7 @@ export function buildFinalDocument(cleanData: any, id: string, meta: any) {
 
 export function makeSuccessState(
   message: string,
-  inputs: any
+  inputs: Record<string, unknown>
 ): ProductFormState {
   return {
     success: true,
@@ -44,7 +48,7 @@ export function makeSuccessState(
 
 export function makeErrorState(
   message: string,
-  inputs: any = {},
+  inputs: Record<string, unknown> = {},
   errors: Record<string, string[]> = {}
 ): ProductFormState {
   return {
@@ -58,7 +62,7 @@ export function makeErrorState(
 export async function ensureUniqueTitleOrError(
   title: string,
   currentId?: string,
-  inputsOnError: any = {}
+  inputsOnError: Record<string, unknown> = {}
 ): Promise<ProductFormState | null> {
   const productsRef = collection(db, collections.products);
   const q = query(productsRef, where("title", "==", title));

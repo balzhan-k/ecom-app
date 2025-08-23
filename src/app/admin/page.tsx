@@ -1,11 +1,9 @@
 import Link from "next/link";
-import { Product } from "@/types/product";
+import Image from "next/image";
 import { getAllProducts } from "@/utils/products";
 import { PlusIcon, PencilIcon, TrashIcon } from "lucide-react";
 import {
   formatPrice,
-  formatPercentage,
-  formatNumber,
   getProductDisplayTitle,
   calculateDiscountedPrice,
 } from "@/utils/formatters";
@@ -38,9 +36,11 @@ export default async function AdminDashboard() {
             key={product.id}
             className="bg-white border border-gray-200 rounded-lg shadow-md p-4 flex items-center gap-4"
           >
-            <img
+            <Image
               src={product.images[0]}
               alt={product.title}
+              width={64}
+              height={64}
               className="w-16 h-16 object-cover rounded"
             />
             <div className="flex-1">
