@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 import { Product, Category } from "@/types/product";
 
-function firestoreTimestampToObject(data: any): any {
+function firestoreTimestampToObject(data: unknown): unknown {
   if (data === null || data === undefined) {
     return data;
   }
@@ -23,8 +23,8 @@ function firestoreTimestampToObject(data: any): any {
     return data.map(firestoreTimestampToObject);
   }
 
-  if (typeof data === "object") {
-    const converted: any = {};
+  if (typeof data === "object" && data !== null) {
+    const converted: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(data)) {
       converted[key] = firestoreTimestampToObject(value);
     }
@@ -51,7 +51,7 @@ export async function getProductsByCategory(
 
       const product = {
         id: doc.id,
-        ...convertedData,
+        ...(convertedData as Record<string, unknown>),
       } as Product;
 
       products.push(product);
@@ -75,7 +75,7 @@ export async function getProductById(id: string): Promise<Product | null> {
 
       return {
         id: docSnap.id,
-        ...convertedData,
+        ...(convertedData as Record<string, unknown>),
       } as Product;
     } else {
       return null;
@@ -98,7 +98,7 @@ export async function getAllProducts(): Promise<Product[]> {
 
       products.push({
         id: doc.id,
-        ...convertedData,
+        ...(convertedData as Record<string, unknown>),
       } as Product);
     });
 

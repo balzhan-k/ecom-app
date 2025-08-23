@@ -21,7 +21,11 @@ export function formatNumber(value: number | undefined): string {
   return "N/A";
 }
 
-export function formatDimensions(dimensions: any): string {
+export function formatDimensions(dimensions: {
+  width?: number;
+  height?: number;
+  depth?: number;
+}): string {
   if (typeof dimensions === "object" && dimensions?.width !== undefined) {
     return `W: ${dimensions.width ?? "N/A"}cm, H: ${
       dimensions.height ?? "N/A"
@@ -30,7 +34,7 @@ export function formatDimensions(dimensions: any): string {
   return "N/A";
 }
 
-export function formatText(value: any): string {
+export function formatText(value: string | number | boolean): string {
   if (value === null || value === undefined || value === "") {
     return "N/A";
   }
@@ -53,7 +57,6 @@ export function getProductDisplayTitle(product: {
 }): string {
   return `${product.brand}. ${product.title}`;
 }
-
 
 export function toCents(price: number | undefined): number {
   if (typeof price !== "number") return 0;

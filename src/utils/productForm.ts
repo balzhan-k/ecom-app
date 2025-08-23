@@ -115,12 +115,12 @@ export function convertRawDataToInputs(rawData: RawProductFormData) {
   };
 }
 
-export function removeUndefined(obj: any): any {
+export function removeUndefined(obj: unknown): any {
   if (obj === undefined || obj === null) return undefined;
   if (Array.isArray(obj))
     return obj.map(removeUndefined).filter((item) => item !== undefined);
   if (typeof obj === "object") {
-    const cleaned: any = {};
+    const cleaned: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
       const cleanedValue = removeUndefined(value);
       if (cleanedValue !== undefined) cleaned[key] = cleanedValue;

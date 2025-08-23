@@ -5,7 +5,7 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 import QuantityControl from "@/components/common/QuantityControl";
-import { formatPrice, calculateDiscountedPrice } from "@/utils/formatters";
+import { formatPrice } from "@/utils/formatters";
 import { loadStripe } from "@stripe/stripe-js";
 
 const stripePromise = loadStripe(
