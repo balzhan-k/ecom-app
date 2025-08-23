@@ -6,6 +6,11 @@ import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 import QuantityControl from "@/components/common/QuantityControl";
 import { formatPrice, calculateDiscountedPrice } from "@/utils/formatters";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
 
 export default function CartPage() {
   const {
@@ -17,6 +22,45 @@ export default function CartPage() {
     increaseQuantity,
     decreaseQuantity,
   } = useCart();
+
+  const handleCheckout = async () => {
+    try {
+      const stripe = await stripePromise;
+
+      // Преобразуем элементы корзины в формат, который ожидает бэкенд для Stripe
+      const checkoutItems = cart.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price, // Предполагается, что item.price уже в центах
+        quantity: item.quantity,
+      }));
+
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ items: checkoutItems }),
+      });
+
+      const session = await response.json();
+
+      if (response.ok) {
+        const result = await stripe?.redirectToCheckout({
+          sessionId: session.id,
+        });
+
+        if (result?.error) {
+          alert(result.error.message);
+        }
+      } else {
+        alert(session.error || "Failed to create checkout session");
+      }
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      alert("An unexpected error occurred.");
+    }
+  };
 
   if (cart.length === 0) {
     return (
@@ -100,7 +144,10 @@ export default function CartPage() {
                 Total Price: {formatPrice(getTotalPrice())}
               </p>
             </div>
-            <button className="bg-cyan-700 text-white px-6 py-3 rounded-lg hover:bg-cyan-800 transition-colors font-semibold">
+            <button
+              onClick={handleCheckout}
+              className="bg-cyan-700 text-white px-6 py-3 rounded-lg hover:bg-cyan-800 transition-colors font-semibold"
+            >
               Checkout
             </button>
           </div>

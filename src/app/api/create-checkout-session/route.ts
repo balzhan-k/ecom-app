@@ -1,0 +1,72 @@
+import { NextResponse } from "next/server";
+import Stripe from "stripe";
+import admin from "firebase-admin";
+
+// Инициализация Firebase Admin SDK, если еще не инициализирован
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(
+      JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY!)
+    ),
+  });
+}
+
+const db = admin.firestore();
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2025-07-30.basil",
+});
+
+export async function POST(req: Request) {
+  try {
+    const { items } = await req.json();
+
+    const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+
+    for (const item of items) {
+      const productId = item.id;
+      const quantity = item.quantity;
+
+      const productDoc = await db.collection("products").doc(productId).get();
+
+      if (!productDoc.exists) {
+        throw new Error(`Product with ID ${productId} not found.`);
+      }
+
+      const productData = productDoc.data();
+      if (
+        !productData ||
+        typeof productData.price !== "number" ||
+        typeof productData.title !== "string"
+      ) {
+        throw new Error(`Invalid product data for ID ${productId}.`);
+      }
+
+      lineItems.push({
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: productData.title,
+          },
+          unit_amount: Math.round(productData.price * 100), // Умножаем на 100 и округляем до целого
+        },
+        quantity: quantity,
+      });
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItems,
+      mode: "payment",
+      success_url: `${req.headers.get(
+        "origin"
+      )}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.headers.get("origin")}/cancel`,
+    });
+
+    return NextResponse.json({ id: session.id });
+  } catch (error: any) {
+    console.error("Error creating checkout session:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
