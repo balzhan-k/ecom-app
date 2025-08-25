@@ -7,6 +7,7 @@ import Image from "next/image";
 import QuantityControl from "@/components/common/QuantityControl";
 import { formatPrice } from "@/utils/formatters";
 import { loadStripe } from "@stripe/stripe-js";
+import { createCheckoutSession } from "@/app/actions/checkout";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -27,34 +28,33 @@ export default function CartPage() {
     try {
       const stripe = await stripePromise;
 
-      // Преобразуем элементы корзины в формат, который ожидает бэкенд для Stripe
+      // Преобразуем элементы корзины в формат для Server Action
       const checkoutItems = cart.map((item) => ({
         id: item.id,
-        name: item.name,
-        price: item.price, // Предполагается, что item.price уже в центах
         quantity: item.quantity,
       }));
 
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ items: checkoutItems }),
-      });
+      // Используем Server Action вместо прямого API вызова
+      // Передаем текущий origin для создания правильных URL
+      const result = await createCheckoutSession(
+        checkoutItems,
+        window.location.origin
+      );
 
-      const session = await response.json();
-
-      if (response.ok) {
-        const result = await stripe?.redirectToCheckout({
-          sessionId: session.id,
+      if (result.success && result.url) {
+        // Прямой редирект на Stripe (как в коде учительницы)
+        window.location.href = result.url;
+      } else if (result.success && result.sessionId) {
+        // Fallback: используем Stripe.js для редиректа
+        const checkoutResult = await stripe?.redirectToCheckout({
+          sessionId: result.sessionId,
         });
 
-        if (result?.error) {
-          alert(result.error.message);
+        if (checkoutResult?.error) {
+          alert(checkoutResult.error.message);
         }
       } else {
-        alert(session.error || "Failed to create checkout session");
+        alert(result.error || "Failed to create checkout session");
       }
     } catch (error) {
       console.error("Error during checkout:", error);

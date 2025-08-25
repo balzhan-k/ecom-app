@@ -23,7 +23,7 @@ import {
 import { toCents } from "@/utils/formatters";
 import { stripe } from "@/lib/stripe";
 
-export async function AddNewProductAction(
+export async function addNewProductAction(
   currentState: ProductFormState,
   formData: FormData
 ): Promise<ProductFormState> {
@@ -76,7 +76,6 @@ export async function AddNewProductAction(
       const cleanData = removeUndefined(result.data);
       const meta = buildMetaForUpdate(existingProduct.meta?.createdAt);
 
-      // Stripe: обновление/создание Product
       let stripeProductId = (
         existingProduct as Product & {
           stripeProductId?: string;
@@ -98,7 +97,6 @@ export async function AddNewProductAction(
         stripeProductId = stripeProduct.id;
       }
 
-      // Stripe: создание новой Price при изменении цены
       let stripePriceId = (
         existingProduct as Product & {
           stripePriceId?: string;
@@ -152,14 +150,12 @@ export async function AddNewProductAction(
       const cleanData = removeUndefined(result.data);
       const meta = buildMetaForCreate();
 
-      // Stripe: создание Product
       const stripeProduct = await stripe.products.create({
         name: result.data.title,
         description: result.data.description,
         images: result.data.images?.slice(0, 8),
       });
 
-      // Stripe: создание Price
       const priceInCents = toCents(result.data.price);
       const stripePrice = await stripe.prices.create({
         unit_amount: priceInCents,

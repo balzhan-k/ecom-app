@@ -39,12 +39,10 @@ export async function backfillStripeIds(): Promise<{
         `Processing product: ${productData.title || "Unknown"} (${productId})`
       );
 
-      // Проверяем, есть ли уже Stripe ID
       let stripeProductId = productData.stripeProductId;
       let stripePriceId = productData.stripePriceId;
       let needsUpdate = false;
 
-      // Если нет Product ID, создаём в Stripe
       if (!stripeProductId) {
         console.log(`Creating Stripe product for: ${productData.title}`);
 
@@ -63,7 +61,6 @@ export async function backfillStripeIds(): Promise<{
         );
       }
 
-      // Если нет Price ID или цена изменилась, создаём новую цену
       if (!stripePriceId && typeof productData.price === "number") {
         console.log(`Creating Stripe price for: ${productData.title}`);
 
@@ -81,7 +78,6 @@ export async function backfillStripeIds(): Promise<{
         );
       }
 
-      // Если что-то создали, обновляем документ в Firebase
       if (needsUpdate) {
         await updateDoc(doc(db, collections.products, productId), {
           stripeProductId,
