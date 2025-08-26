@@ -4,6 +4,7 @@ import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import { CartProvider } from "@/context/CartContext";
 import MobileTabBar from "@/components/layout/MobileTabBar";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
   title: "MiniCom",
@@ -19,6 +20,7 @@ export default function RootLayout({
     <CartProvider>
       <html lang="en">
         <body className="min-h-screen flex flex-col antialiased">
+          <AuthProvider>
           <Header />
           <main className="flex-1">
             <div className="md:max-w-7xl mx-auto px-4">
@@ -27,6 +29,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <MobileTabBar />
+          </AuthProvider>
         </body>
       </html>
     </CartProvider>
