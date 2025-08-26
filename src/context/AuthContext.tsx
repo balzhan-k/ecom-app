@@ -1,13 +1,13 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { 
-  User, 
-  signInWithEmailAndPassword, 
+import {
+  User,
+  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db, googleProvider } from "@/lib/firebase";
@@ -36,13 +36,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Слушаем изменения состояния аутентификации
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
-      
+
       if (user) {
-        // Получаем данные пользователя из Firestore
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
           setUserData(userDoc.data() as UserData);
@@ -50,27 +48,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setUserData(null);
       }
-      
+
       setLoading(false);
     });
 
     return unsubscribe;
   }, []);
 
-  // Создание или получение данных пользователя
   const createOrGetUserData = async (user: User) => {
     const userRef = doc(db, "users", user.uid);
     const userDoc = await getDoc(userRef);
 
     if (!userDoc.exists()) {
-      // Создаем нового пользователя
       const newUserData: UserData = {
         uid: user.uid,
         email: user.email!,
-        role: "user", // по умолчанию обычный пользователь
+        role: "user",
         createdAt: new Date(),
       };
-      
+
       await setDoc(userRef, newUserData);
       setUserData(newUserData);
     } else {
