@@ -77,18 +77,7 @@ export default function CartPage() {
 
   return (
     <div className="container mx-auto p-8 pb-20">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="tracking-light text-2xl font-bold leading-tight text-cyan-700">
-          Your Cart
-        </h1>
-        <button
-          onClick={clearCart}
-          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
-        >
-          <FontAwesomeIcon icon={faTrash} />
-          Clear Cart
-        </button>
-      </div>
+      
 
       <div className="bg-white rounded-lg shadow-md p-6">
         <ul className="space-y-4">
@@ -109,7 +98,7 @@ export default function CartPage() {
                   {item.name}
                 </h2>
                 <p className="font-semibold text-cyan-700">
-                  Price: {formatPrice(item.price)}
+               {formatPrice(item.price)}
                 </p>
                 <div className="flex justify-between items-center mt-2">
                   <div className="flex items-center">
@@ -123,7 +112,7 @@ export default function CartPage() {
 
                   <button
                     onClick={() => removeFromCart(item.id)}
-                    className="text-red-600 hover:text-red-800 transition-colors p-2 rounded"
+                    className="text-cyan-600 hover:text-cyan-800 transition-colors p-2 rounded"
                     aria-label="Remove from cart"
                   >
                     <FontAwesomeIcon icon={faTrash} />
@@ -144,12 +133,21 @@ export default function CartPage() {
                 Total Price: {formatPrice(getTotalPrice())}
               </p>
             </div>
-            <button
-              onClick={handleCheckout}
-              className="bg-cyan-700 text-white px-6 py-3 rounded-lg hover:bg-cyan-800 transition-colors font-semibold"
-            >
-              Checkout
-            </button>
+            <div className="flex justify-between gap-4 items-center mb-8">
+              <button
+                onClick={clearCart}
+                className="bg-cyan-700 text-white px-6 py-3 rounded-lg hover:bg-cyan-800 transition-colors font-semibold"
+              >
+                
+                Clear Cart
+              </button>
+              <button
+                onClick={handleCheckout}
+                className="bg-cyan-700 text-white px-6 py-3 rounded-lg hover:bg-cyan-800 transition-colors font-semibold"
+              >
+                Checkout
+              </button>
+            </div>
           </div>
         </div>
       </div>

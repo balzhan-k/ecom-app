@@ -2,8 +2,6 @@ export default function CategoryLoading() {
   return (
     <div className="py-8">
       <div className="animate-pulse">
-        {/* Заголовок категории */}
-        <div className="h-8 bg-gray-200 rounded w-1/3 mb-8"></div>
 
         {/* Сетка товаров */}
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-20">

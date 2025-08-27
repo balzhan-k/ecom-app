@@ -35,10 +35,7 @@ export default async function CategoryPage({
   const products = await getProductsByCategory(categoryName as Category);
 
   return (
-    <div className="py-8">
-      <h1 className="tracking-light text-2xl font-bold leading-tight  text-cyan-700 mb-8">
-        {categoryName}
-      </h1>
+    <div className="py-8 pt-10">
       <ProductGrid products={products} />
     </div>
   );
