@@ -4,9 +4,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { UserIcon } from "@heroicons/react/24/outline";
+import { UserMenu } from "./UserMenu";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Header() {
   const currentPath = usePathname();
+  const { user } = useAuth();
 
   return (
     <header className="bg-white border-b-2 border-gray-200 sticky top-0 z-50 shadow-sm">
@@ -18,13 +22,13 @@ export default function Header() {
               className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
             >
               <Image
-                  src="/logo.jpg"
-                  alt="MiniCom Logo"
-                  width={0}
-                  height={0}
-                  sizes="100vw"
-                  className="w-[150px] h-auto"
-                  priority
+                src="/logo.jpg"
+                alt="MiniCom Logo"
+                width={0}
+                height={0}
+                sizes="100vw"
+                className="w-[150px] h-auto"
+                priority
               />
             </Link>
           </div>
@@ -38,29 +42,20 @@ export default function Header() {
             >
               Home
             </Link>
-            <Link
-              href="/admin"
-              className={`font-bold transition-colors ${
-                currentPath === "/admin"
-                  ? "text-cyan-600"
-                  : "hover:text-cyan-600"
-              }`}
-            >
-              Admin
-            </Link>
-            <Link
-              href="/login"
-              className={`font-bold transition-colors ${
-                currentPath === "/login"
-                  ? "text-cyan-600"
-                  : "hover:text-cyan-600"
-              }`}
-            >
-              Login
-            </Link>
           </nav>
 
-          <div className="flex-shrink-0">
+          <div className="flex items-center gap-4">
+            {user ? (
+              <UserMenu />
+            ) : (
+              <Link
+                href="/login"
+                className="flex items-center gap-2 text-cyan-800 hover:text-cyan-600 transition-colors"
+              >
+                <UserIcon className="w-5 h-5" />
+                <span className="font-medium">Login</span>
+              </Link>
+            )}
             <Link
               href="/cart"
               className={`hidden md:flex items-center transition-colors ${
