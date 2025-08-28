@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import { Noto_Sans } from "next/font/google";
 import "./globals.css";
+
+const notoSans = Noto_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-import { CartProvider } from "@/context/CartContext";
 import MobileTabBar from "@/components/layout/MobileTabBar";
+import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
@@ -18,7 +24,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col antialiased">
+      <body
+        className={`${notoSans.className} min-h-screen flex flex-col antialiased`}
+      >
         <AuthProvider>
           <CartProvider>
             <Header />

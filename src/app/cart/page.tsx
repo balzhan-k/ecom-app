@@ -1,13 +1,14 @@
 "use client";
 
+import Image from "next/image";
+import { loadStripe } from "@stripe/stripe-js";
+import { useCart } from "@/context/CartContext";
+import QuantityControl from "@/components/common/QuantityControl";
+import { createCheckoutSession } from "@/app/actions/checkout";
+import { formatPrice } from "@/utils/formatters";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import { useCart } from "@/context/CartContext";
-import Image from "next/image";
-import QuantityControl from "@/components/common/QuantityControl";
-import { formatPrice } from "@/utils/formatters";
-import { loadStripe } from "@stripe/stripe-js";
-import { createCheckoutSession } from "@/app/actions/checkout";
+import Link from "next/link";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -64,21 +65,34 @@ export default function CartPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="container min-h-screen mx-auto p-4">
-        <h1 className="tracking-light text-2xl font-bold leading-tight text-cyan-700 mb-2">
-          Your cart is empty
-        </h1>
-        <p className="text-gray-600 text-sm">
-          Add some products to your cart to get started!
+      <div className="container mt-10 mx-auto p-4 flex flex-col items-center justify-center">
+        <Image
+          src="/shoppingBag.jpg"
+          alt="Shopping Bag"
+          width={480}
+          height={480}
+          className="rounded-lg w-full max-w-[480px]"
+        />
+
+        <p className="text-lg font-bold leading-tight max-w-[480px] text-center text-cyan-700 mt-6">
+          Your bag is empty
         </p>
+        <p className="text-sm font-normal leading-normal  text-center mt-2 text-stone-500">
+          Looks like you haven't added anything to your bag yet. Let's find
+          something you love!
+        </p>
+        <Link
+          href="/"
+          className="bg-cyan-700 hover:bg-cyan-800 text-white px-6 py-3 rounded-lg transition-colors mt-4 font-semibold"
+        >
+          Continue shopping
+        </Link>
       </div>
     );
   }
 
   return (
     <div className="container mx-auto p-8 pb-20">
-      
-
       <div className="bg-white rounded-lg shadow-md p-6">
         <ul className="space-y-4">
           {cart.map((item) => (
@@ -98,7 +112,7 @@ export default function CartPage() {
                   {item.name}
                 </h2>
                 <p className="font-semibold text-cyan-700">
-               {formatPrice(item.price)}
+                  {formatPrice(item.price)}
                 </p>
                 <div className="flex justify-between items-center mt-2">
                   <div className="flex items-center">
@@ -138,7 +152,6 @@ export default function CartPage() {
                 onClick={clearCart}
                 className="bg-cyan-700 text-white px-6 py-3 rounded-lg hover:bg-cyan-800 transition-colors font-semibold"
               >
-                
                 Clear Cart
               </button>
               <button

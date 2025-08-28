@@ -108,3 +108,16 @@ export async function getAllProducts(): Promise<Product[]> {
     return [];
   }
 }
+
+export async function getRandomProducts(count: number = 4): Promise<Product[]> {
+  try {
+    const allProducts = await getAllProducts();
+
+    // Перемешиваем массив товаров и берем первые count элементов
+    const shuffled = allProducts.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+  } catch (error) {
+    console.error("Error fetching random products:", error);
+    return [];
+  }
+}
