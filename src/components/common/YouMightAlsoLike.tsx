@@ -26,8 +26,8 @@ export default function YouMightAlsoLike() {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-8">
-        <h2 className="text-ыь font-bold text-cyan-700 mb-6">
+      <div className="">
+        <h2 className="text-xs font-bold text-stone-700 mb-6">
           You might also like
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -134,7 +134,7 @@ export default function ProductPage({
             </div>
           )}
 
-          <div className="space-y-2 text-sm text-gray-600">
+          <div className="space-y-1 text-sm text-gray-600">
             {[
               { label: "Brand", value: product.brand },
               { label: "Stock", value: `${product.stock} pcs` },

@@ -103,9 +103,6 @@ export default function Header() {
             />
 
             <div className="hidden md:flex items-center gap-5">
-              <Link href="/" className="text-cyan-800 hover:text-cyan-600">
-                <HomeIcon className="w-5 h-5" />
-              </Link>
 
               {user ? (
                 <UserMenu />
