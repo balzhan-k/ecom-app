@@ -74,19 +74,6 @@ A modern e-commerce web application built with Next.js, featuring office supplie
 - `zod`: Schema validation
 - `tailwindcss`: Utility-first CSS framework
 
-## 🚦 Available Scripts
-
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Create production build
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
-
-## 🐛 Troubleshooting
-
-- **Hydration Errors**: Ensure localStorage checks use `typeof window !== "undefined"`
-- **Authentication Issues**: Verify Firebase configuration and authorized domains
-- **Payment Problems**: Check Stripe webhook configuration and API keys
-- **Build Errors**: Ensure all environment variables are properly set
 
 ## 📝 License
 
