@@ -87,7 +87,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="container mx-auto p-8 pb-20">
+    <div className="container mx-auto pt-10 pb-20">
       <div className="bg-white rounded-lg shadow-md p-6">
         <ul className="space-y-4">
           {cart.map((item) => (
@@ -133,25 +133,25 @@ export default function CartPage() {
         </ul>
 
         <div className="mt-6 pt-6 border-t border-gray-200">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col items-start md:flex-row md:justify-between gap-4 align-center">
             <div>
-              <p className="text-md text-gray-600">
+              <p className="text-sm md:text-md text-gray-600">
                 Total Items: {getTotalItems()}
               </p>
-              <p className="text-xl font-bold text-cyan-700">
+              <p className="test-sm md:text-xl font-bold text-cyan-700">
                 Total Price: {formatPrice(getTotalPrice())}
               </p>
             </div>
-            <div className="flex justify-between gap-4 items-center mb-8">
+            <div className="flex flex-row md:justify-between gap-4 md:items-center w-full md:w-auto">
               <button
                 onClick={clearCart}
-                className="bg-cyan-700 text-white px-6 py-3 rounded-lg hover:bg-cyan-800 transition-colors font-semibold"
+                className="bg-cyan-700 text-white px-6 py-3 rounded-lg hover:bg-cyan-800 transition-colors font-semibold w-full"
               >
-                Clear Cart
+                Clear All
               </button>
               <button
                 onClick={handleCheckout}
-                className="bg-cyan-700 text-white px-6 py-3 rounded-lg hover:bg-cyan-800 transition-colors font-semibold"
+                className="bg-cyan-700 text-white px-6 py-3 rounded-lg hover:bg-cyan-800 transition-colors font-semibold w-full"
               >
                 Checkout
               </button>
