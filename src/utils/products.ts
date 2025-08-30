@@ -121,3 +121,23 @@ export async function getRandomProducts(count: number = 4): Promise<Product[]> {
     return [];
   }
 }
+
+export async function getDiscountedProducts(
+  count: number = 4
+): Promise<Product[]> {
+  try {
+    const allProducts = await getAllProducts();
+
+    // Фильтруем товары со скидкой (discountPercentage > 0)
+    const discountedProducts = allProducts.filter(
+      (product) => (product.discountPercentage ?? 0) > 0
+    );
+
+    // Перемешиваем и берем нужное количество
+    const shuffled = discountedProducts.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+  } catch (error) {
+    console.error("Error fetching discounted products:", error);
+    return [];
+  }
+}

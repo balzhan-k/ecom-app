@@ -26,7 +26,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/categories/products/${product.id}`}>
       <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
-        <div className="relative h-48 w-full">
+        <div className="relative h-64 w-full">
           <Image
             src={imageUrl}
             alt={product.title}
@@ -35,7 +35,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="object-cover rounded-t-lg"
           />
           {(product.discountPercentage ?? 0) > 0 && (
-            <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-bold">
+            <div className="absolute top-2 right-2 bg-rose-500 text-white px-2 py-1 rounded text-sm font-bold">
               -{product.discountPercentage}%
             </div>
           )}
@@ -43,7 +43,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         <div className="p-4">
           <h3
-            className="font-semibold text-gray-800 mb-2 text-sm leading-tight"
+            className="font-semibold text-gray-800 mb-2 text-sm leading-tight min-h-[2.5rem] flex items-start"
             title={getProductDisplayTitle(product)}
           >
             {getProductDisplayTitle(product)}

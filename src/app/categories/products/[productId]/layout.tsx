@@ -1,4 +1,4 @@
-import YouMightAlsoLike from "@/components/common/YouMightAlsoLike";
+import YouMightAlsoLike from "@/components/common/FeaturedProducts";
 
 export default function CartLayout({
   children,

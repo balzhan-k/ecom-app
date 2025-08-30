@@ -29,24 +29,19 @@ export default function CartPage() {
     try {
       const stripe = await stripePromise;
 
-      // Преобразуем элементы корзины в формат для Server Action
       const checkoutItems = cart.map((item) => ({
         id: item.id,
         quantity: item.quantity,
       }));
 
-      // Используем Server Action вместо прямого API вызова
-      // Передаем текущий origin для создания правильных URL
       const result = await createCheckoutSession(
         checkoutItems,
         window.location.origin
       );
 
       if (result.success && result.url) {
-        // Прямой редирект на Stripe (как в коде учительницы)
         window.location.href = result.url;
       } else if (result.success && result.sessionId) {
-        // Fallback: используем Stripe.js для редиректа
         const checkoutResult = await stripe?.redirectToCheckout({
           sessionId: result.sessionId,
         });
@@ -65,7 +60,7 @@ export default function CartPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="container mt-10 mx-auto p-4 flex flex-col items-center justify-center">
+      <div className="container mt-10 mb-20 mx-auto flex flex-col items-center justify-center">
         <Image
           src="/shoppingBag.jpg"
           alt="Shopping Bag"

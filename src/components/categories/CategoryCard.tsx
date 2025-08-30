@@ -26,19 +26,18 @@ export default function CategoryCard({ category }: CategoryCardProps) {
 
   return (
     <Link href={`/categories/${categorySlug}`}>
-      <div
-        className="bg-cover bg-center flex flex-col items-stretch justify-end rounded-xl pt-[132px] h-48 cursor-pointer transition-transform duration-300 hover:scale-105"
-        style={{
-          backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%), url("${imageUrl}")`,
-        }}
-      >
-        <div className="flex w-full items-end justify-between gap-4 p-4">
-          <div className="flex-1">
-            <p className="text-white tracking-light text-2xl font-bold leading-tight">
-              {category}
-            </p>
-          </div>
-        </div>
+      <div className="cursor-pointer transition-transform duration-300 hover:scale-105">
+        <div
+          className="bg-cover bg-center rounded-full w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40 mx-auto"
+          style={{
+            backgroundImage: `url("${imageUrl}")`,
+          }}
+        />
+      </div>
+      <div className="mt-2 sm:mb-3 md:mb-4">
+        <h3 className="text-stone-600 font-semibold text-xs md:text-sm lg:text-lg text-center">
+          {category}
+        </h3>
       </div>
     </Link>
   );
