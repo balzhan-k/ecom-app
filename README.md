@@ -64,16 +64,6 @@ A modern e-commerce web application built with Next.js, featuring office supplie
 - **SSR/Client Hydration**: Proper handling of server-side rendering
 - **Image Optimization**: Next.js Image component with responsive sizing
 
-## 📦 Key Dependencies
-
-- `next`: React framework with App Router
-- `firebase`: Backend services (Auth, Firestore)
-- `stripe`: Payment processing
-- `@vercel/blob`: File storage
-- `react-hook-form`: Form management
-- `zod`: Schema validation
-- `tailwindcss`: Utility-first CSS framework
-
 
 ## 📝 License
 
