@@ -19,7 +19,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: Request) {
   try {
-    const { items } = await req.json();
+    const { items, userId } = await req.json(); // Изменено: добавлен userId
 
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 
@@ -45,9 +45,7 @@ export async function POST(req: Request) {
       lineItems.push({
         price_data: {
           currency: "usd",
-          product_data: {
-            name: productData.title,
-          },
+          product: productId, // Исправлено: используем 'product' вместо 'product_data' с 'id'
           unit_amount: Math.round(productData.price * 100), // Умножаем на 100 и округляем до целого
         },
         quantity: quantity,
@@ -62,6 +60,10 @@ export async function POST(req: Request) {
         "origin"
       )}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/cancel`,
+      metadata: {
+        // Добавлено: передаем userId в метаданные сессии
+        userId: userId,
+      },
     });
 
     return NextResponse.json({ id: session.id });

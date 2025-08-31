@@ -26,6 +26,7 @@ export default function CartPage() {
   } = useCart();
 
   const handleCheckout = async () => {
+    console.log("handleCheckout called, initiating checkout session...");
     try {
       const stripe = await stripePromise;
 

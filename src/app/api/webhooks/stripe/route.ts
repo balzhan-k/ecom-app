@@ -113,11 +113,12 @@ async function handleCheckoutSessionCompleted(
 
     // Get session details including line_items
     const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
-      expand: ["line_items", "line_items.price.product"],
+      expand: ["line_items", "line_items.data.price.product"], // Исправлено
     });
 
     console.log("📦 Items in order:", fullSession.line_items?.data.length);
 
+    console.log("⚙️ Calling updateProductStock..."); // Добавлен лог
     // Update product stock
     await updateProductStock(fullSession);
 
@@ -150,10 +151,11 @@ async function updateProductStock(session: Stripe.Checkout.Session) {
   const batch = db.batch();
 
   for (const lineItem of session.line_items.data) {
+    console.log("🔄 Processing line item:", lineItem.id); // Добавлен лог
     try {
       // Get product ID from Stripe product metadata
       const stripeProduct = lineItem.price?.product as Stripe.Product;
-      const productId = stripeProduct?.metadata?.firebaseId;
+      const productId = stripeProduct?.id; // Изменено: теперь используем stripeProduct.id
 
       if (!productId) {
         console.warn(
@@ -211,7 +213,7 @@ async function saveOrderToHistory(
     const items = session.line_items.data.map((lineItem) => {
       const stripeProduct = lineItem.price?.product as Stripe.Product;
       return {
-        productId: stripeProduct?.metadata?.firebaseId || "unknown",
+        productId: stripeProduct?.id || "unknown", // Изменено: теперь используем stripeProduct.id
         productName: stripeProduct?.name || "Unknown Product",
         quantity: lineItem.quantity || 0,
         price: (lineItem.price?.unit_amount || 0) / 100, // Convert cents to dollars
