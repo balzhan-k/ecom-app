@@ -16,7 +16,7 @@ A modern e-commerce web application built with Next.js, featuring office supplie
 ## 🛠️ Tech Stack
 
 - **Frontend**: Next.js 15, React 19, TypeScript
-- **Styling**: Tailwind CSS 4
+- **Styling**: Tailwind CSS 3
 - **Database**: Firebase Firestore
 - **Authentication**: Firebase Auth
 - **Payment**: Stripe
