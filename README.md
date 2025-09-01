@@ -56,14 +56,6 @@ A modern e-commerce web application built with Next.js, featuring office supplie
 - **Toast Notifications**: User feedback for actions
 - **Color Scheme**: Cyan-based theme with professional styling
 
-## 🔧 Development Notes
-
-- **State Management**: React Context for cart and authentication
-- **Form Validation**: Zod schemas with React Hook Form
-- **Type Safety**: Full TypeScript implementation
-- **SSR/Client Hydration**: Proper handling of server-side rendering
-- **Image Optimization**: Next.js Image component with responsive sizing
-
 
 ## 📝 License
 
