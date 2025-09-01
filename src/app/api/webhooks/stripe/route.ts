@@ -169,14 +169,24 @@ async function updateProductStock(session: Stripe.Checkout.Session) {
       console.log(`📦 Updating product ${productId}: -${quantity}`);
 
       // Get current product data
-      const productRef = db.collection("products").doc(productId);
-      const productDoc = await productRef.get();
+      // const productRef = db.collection("products").doc(productId);
+      // const productDoc = await productRef.get();
 
-      if (!productDoc.exists) {
-        console.warn(`⚠️ Product ${productId} not found in Firebase`);
+      const productQuery = await db
+        .collection("products")
+        .where("stripeProductId", "==", productId)
+        .limit(1)
+        .get();
+      const productDoc = productQuery.docs[0]; // Получаем первый (и единственный) документ
+
+      if (!productDoc?.exists) {
+        console.warn(
+          `⚠️ Product ${productId} not found in Firebase (by stripeProductId)`
+        );
         continue;
       }
 
+      const productRef = productDoc.ref;
       const productData = productDoc.data();
       const currentStock = productData?.stock || 0;
       const newStock = Math.max(0, currentStock - quantity); // Prevent negative stock
@@ -210,17 +220,41 @@ async function saveOrderToHistory(
     }
 
     // Prepare items data
-    const items = session.line_items.data.map((lineItem) => {
-      const stripeProduct = lineItem.price?.product as Stripe.Product;
-      return {
-        productId: stripeProduct?.id || "unknown", // Изменено: теперь используем stripeProduct.id
-        productName: stripeProduct?.name || "Unknown Product",
-        quantity: lineItem.quantity || 0,
-        price: (lineItem.price?.unit_amount || 0) / 100, // Convert cents to dollars
-        totalPrice:
-          ((lineItem.price?.unit_amount || 0) * (lineItem.quantity || 0)) / 100,
-      };
-    });
+    const items = await Promise.all(
+      session.line_items.data.map(async (lineItem) => {
+        // Изменено: добавлен await Promise.all и async
+        const stripeProduct = lineItem.price?.product as Stripe.Product;
+
+        let firebaseProductId: string | undefined;
+        let firebaseProductName: string =
+          stripeProduct?.name || "Unknown Product";
+
+        if (stripeProduct?.id) {
+          const productQuery = await db
+            .collection("products")
+            .where("stripeProductId", "==", stripeProduct.id)
+            .limit(1)
+            .get();
+          if (productQuery.docs.length > 0) {
+            const productDoc = productQuery.docs[0];
+            firebaseProductId = productDoc.id; // Получаем ID документа Firebase
+            const productData = productDoc.data();
+            firebaseProductName =
+              productData?.title || stripeProduct?.name || "Unknown Product";
+          }
+        }
+
+        return {
+          productId: firebaseProductId || stripeProduct?.id || "unknown", // Используем ID документа Firebase, если найден, иначе Stripe Product ID
+          productName: firebaseProductName,
+          quantity: lineItem.quantity || 0,
+          price: (lineItem.price?.unit_amount || 0) / 100, // Convert cents to dollars
+          totalPrice:
+            ((lineItem.price?.unit_amount || 0) * (lineItem.quantity || 0)) /
+            100,
+        };
+      })
+    );
 
     // Create order record
     const orderData = {

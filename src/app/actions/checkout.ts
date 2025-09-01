@@ -51,10 +51,8 @@ export async function createCheckoutSession(
       lineItems.push({
         price_data: {
           currency: "usd",
-          product_data: {
-            name: productData.title,
-          },
-          unit_amount: Math.round(productData.price * 100), 
+          product: productData.stripeProductId, // Исправлено: используем productData.stripeProductId
+          unit_amount: Math.round(productData.price * 100),
         },
         quantity: quantity,
       });
