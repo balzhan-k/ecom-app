@@ -3,8 +3,9 @@
 import Image from "next/image";
 import { loadStripe } from "@stripe/stripe-js";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import QuantityControl from "@/components/common/QuantityControl";
-import { createCheckoutSession } from "@/app/actions/checkout";
+import { createCheckoutSession } from "@/app/actions/cart/checkout";
 import { formatPrice } from "@/utils/formatters";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -25,10 +26,10 @@ export default function CartPage() {
     decreaseQuantity,
   } = useCart();
 
+  const { user } = useAuth();
+
   const handleCheckout = async () => {
     try {
-      const stripe = await stripePromise;
-
       const checkoutItems = cart.map((item) => ({
         id: item.id,
         quantity: item.quantity,
@@ -36,19 +37,12 @@ export default function CartPage() {
 
       const result = await createCheckoutSession(
         checkoutItems,
+        user?.uid,
         window.location.origin
       );
 
       if (result.success && result.url) {
         window.location.href = result.url;
-      } else if (result.success && result.sessionId) {
-        const checkoutResult = await stripe?.redirectToCheckout({
-          sessionId: result.sessionId,
-        });
-
-        if (checkoutResult?.error) {
-          alert(checkoutResult.error.message);
-        }
       } else {
         alert(result.error || "Failed to create checkout session");
       }

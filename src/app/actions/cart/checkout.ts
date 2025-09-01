@@ -24,6 +24,7 @@ export interface CheckoutItem {
 
 export async function createCheckoutSession(
   items: CheckoutItem[],
+  userId?: string, // Добавлен userId
   origin?: string
 ) {
   try {
@@ -43,17 +44,16 @@ export async function createCheckoutSession(
       if (
         !productData ||
         typeof productData.price !== "number" ||
-        typeof productData.title !== "string"
+        typeof productData.title !== "string" ||
+        typeof productData.stripePriceId !== "string" // Добавлена проверка на stripePriceId
       ) {
-        throw new Error(`Invalid product data for ID ${productId}.`);
+        throw new Error(
+          `Invalid product data for ID ${productId}. Missing price or title.`
+        );
       }
 
       lineItems.push({
-        price_data: {
-          currency: "usd",
-          product: productData.stripeProductId, // Исправлено: используем productData.stripeProductId
-          unit_amount: Math.round(productData.price * 100),
-        },
+        price: productData.stripePriceId, // Используем stripePriceId
         quantity: quantity,
       });
     }
@@ -67,6 +67,7 @@ export async function createCheckoutSession(
       mode: "payment",
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/cancel`,
+      ...(userId && { metadata: { userId } }), // Условно добавляем userId в метаданные
     });
 
     return {
