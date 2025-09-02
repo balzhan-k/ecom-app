@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { stripe } from "@/lib/stripe";
-import Image from "next/image"; // Добавлен импорт Image
-// import { formatPrice } from "@/utils/formatters"; // Удален импорт formatPrice
+import Image from "next/image";
+import ClearCartOnMount from "./ClearCartOnMount";
 
 interface SuccessProps {
   searchParams: {
@@ -31,6 +31,8 @@ export default async function Success({ searchParams }: SuccessProps) {
     if (status === "complete") {
       return (
         <div className="container mt-10 mb-20 mx-auto flex flex-col items-center justify-center max-w-sm lg:max-w-lg">
+          {/* Clear cart when arriving at success page */}
+          <ClearCartOnMount />
           <Image
             src="/shoppingBag.jpg"
             alt="Shopping Bag"
@@ -43,9 +45,12 @@ export default async function Success({ searchParams }: SuccessProps) {
             Payment Successful!
           </p>
           <p className="text-sm font-normal leading-normal  text-center mt-2 text-stone-500 ">
-            Thank you for your order! Your order #
-            <span className="font-semibold text-cyan-700 break-all">{session_id}</span>
-            {''} has been placed and is on its way. You'll receive an email
+            Thank you for your order! Your order
+            <span className="font-semibold text-cyan-700 break-all">
+              {" "}
+              #{session_id}
+            </span>{" "}
+            has been placed and is on its way. You'll receive an email
             confirmation shortly.
           </p>
           <a

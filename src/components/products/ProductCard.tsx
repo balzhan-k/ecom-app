@@ -43,7 +43,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         <div className="p-4">
           <h3
-            className="font-semibold text-gray-800 mb-2 text-sm leading-tight min-h-[2.5rem] flex items-start"
+            className="font-semibold text-gray-800 mb-2 text-sm leading-tight min-h-[3.3rem] lg:min-h-[2.5rem] line-clamp-3 lg:line-clamp-2 flex items-start"
             title={getProductDisplayTitle(product)}
           >
             {getProductDisplayTitle(product)}

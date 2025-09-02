@@ -110,11 +110,11 @@ export default function DiscountedProducts() {
 
         <div
           ref={scrollContainerRef}
-          className="flex gap-6 overflow-x-auto scrollbar-hide"
+          className="flex gap-6 overflow-x-auto scrollbar-hide mx-2"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {products.map((product) => (
-            <div key={product.id} className="flex-shrink-0 w-48 lg:w-72">
+            <div key={product.id} className="flex-shrink-0 w-48 lg:w-72 mb-10">
               <ProductCard product={product} />
             </div>
           ))}
