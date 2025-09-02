@@ -22,7 +22,7 @@ A modern e-commerce web application built with Next.js, featuring office supplie
 - **Payment**: Stripe
 - **File Storage**: Vercel Blob
 - **Form Handling**: React Hook Form with Zod validation
-- **Icons**: Heroicons, Lucide React, Font Awesome
+- **Resend**: Sending confirmation email to user
 
 
 ## 📱 Key Pages
