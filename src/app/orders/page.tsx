@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { db } from "@/lib/firebase";
-import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
+import { auth } from "@/lib/firebase";
 import Link from "next/link";
 
 interface OrderItem {
@@ -12,6 +11,7 @@ interface OrderItem {
   quantity: number;
   price: number;
   totalPrice: number;
+  thumbnail?: string;
 }
 
 interface OrderDoc {
@@ -32,23 +32,22 @@ export default function OrdersPage() {
     const fetchOrders = async () => {
       if (!user) return;
       try {
-        const q = query(
-          collection(db, "orders"),
-          where("userId", "==", user.uid),
-          orderBy("createdAt", "desc")
-        );
-        const snapshot = await getDocs(q);
-        const data: OrderDoc[] = snapshot.docs.map((doc) => {
-          const d = doc.data() as any;
-          return {
-            id: doc.id,
-            createdAt: d.createdAt ?? null,
-            status: d.status,
-            totalAmount: d.totalAmount,
-            currency: d.currency,
-            items: d.items ?? [],
-          };
+        const token = await auth.currentUser?.getIdToken();
+        const res = await fetch("/api/orders", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const json = await res.json();
+        const data: OrderDoc[] = (json.orders || []).map((o: any) => ({
+          id: o.id,
+          createdAt: o.createdAt ?? null,
+          status: o.status,
+          totalAmount: o.totalAmount,
+          currency: o.currency,
+          items: o.items ?? [],
+        }));
         setOrders(data);
       } catch (e) {
         console.error("Failed to load orders", e);
@@ -80,7 +79,7 @@ export default function OrdersPage() {
         <h1 className="text-2xl font-bold text-cyan-700">My Orders</h1>
         <button
           onClick={logout}
-          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          className="px-4 py-2 bg-rose-500 text-white rounded hover:bg-rose-700"
         >
           Sign Out
         </button>
@@ -125,16 +124,40 @@ export default function OrdersPage() {
               </div>
 
               <div className="mt-3 border-t pt-3">
-                <ul className="text-sm text-gray-700 space-y-1">
+                <ul className="space-y-3">
                   {order.items.map((item, idx) => (
-                    <li key={idx} className="flex justify-between">
-                      <span>
-                        {item.productName} × {item.quantity}
-                      </span>
-                      <span>
+                    <li
+                      key={idx}
+                      className="flex items-center border-b border-gray-200 pb-3 last:border-b-0"
+                    >
+                      {/* thumbnail */}
+                      {item.thumbnail ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={item.thumbnail}
+                          alt={item.productName}
+                          className="w-20 h-20 object-cover rounded-lg mr-4"
+                        />
+                      ) : (
+                        <div className="w-20 h-20 bg-gray-100 rounded-lg mr-4" />
+                      )}
+
+                      <div className="flex-1">
+                        <h4 className="text-sm font-semibold text-gray-900">
+                          {item.productName}
+                        </h4>
+                        <p className="text-cyan-700 font-semibold">
+                          {order.currency.toUpperCase()} {item.price.toFixed(2)}
+                        </p>
+                        <div className="mt-1 text-sm text-gray-600">
+                          Qty: {item.quantity}
+                        </div>
+                      </div>
+
+                      <div className="text-right font-semibold text-gray-800">
                         {item.totalPrice.toFixed(2)}{" "}
                         {order.currency.toUpperCase()}
-                      </span>
+                      </div>
                     </li>
                   ))}
                 </ul>

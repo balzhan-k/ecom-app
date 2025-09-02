@@ -2,6 +2,82 @@ import { redirect } from "next/navigation";
 import { stripe } from "@/lib/stripe";
 import Image from "next/image";
 import ClearCartOnMount from "./ClearCartOnMount";
+import admin from "firebase-admin";
+
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(
+      JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY!)
+    ),
+  });
+}
+
+const db = admin.firestore();
+
+async function ensureOrderSaved(session: any) {
+  try {
+    const userId = session?.metadata?.userId as string | undefined;
+    if (!userId) return; // only save for authenticated users
+
+    // Skip if already saved
+    const existing = await db
+      .collection("orders")
+      .where("sessionId", "==", session.id)
+      .limit(1)
+      .get();
+    if (!existing.empty) return;
+
+    const items = await Promise.all(
+      (session.line_items?.data || []).map(async (lineItem: any) => {
+        const stripeProduct = lineItem.price?.product as
+          | { id?: string; name?: string }
+          | undefined;
+        let firebaseProductId: string | undefined;
+        let firebaseProductName: string =
+          stripeProduct?.name || "Unknown Product";
+
+        if (stripeProduct?.id) {
+          const productQuery = await db
+            .collection("products")
+            .where("stripeProductId", "==", stripeProduct.id)
+            .limit(1)
+            .get();
+          if (!productQuery.empty) {
+            const productDoc = productQuery.docs[0];
+            firebaseProductId = productDoc.id;
+            const productData = productDoc.data() as any;
+            firebaseProductName = productData?.title || firebaseProductName;
+          }
+        }
+
+        return {
+          productId: firebaseProductId || stripeProduct?.id || "unknown",
+          productName: firebaseProductName,
+          quantity: lineItem.quantity || 0,
+          price: (lineItem.price?.unit_amount || 0) / 100,
+          totalPrice:
+            ((lineItem.price?.unit_amount || 0) * (lineItem.quantity || 0)) /
+            100,
+        };
+      })
+    );
+
+    const orderData = {
+      userId,
+      sessionId: session.id,
+      items,
+      totalAmount: (session.amount_total || 0) / 100,
+      currency: session.currency || "usd",
+      status: "completed",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      paymentStatus: session.payment_status,
+    };
+
+    await db.collection("orders").add(orderData);
+  } catch (e) {
+    console.error("ensureOrderSaved error", e);
+  }
+}
 
 interface SuccessProps {
   searchParams: {
@@ -18,7 +94,7 @@ export default async function Success({ searchParams }: SuccessProps) {
 
   try {
     const session = await stripe.checkout.sessions.retrieve(session_id, {
-      expand: ["line_items", "payment_intent"],
+      expand: ["line_items", "line_items.data.price.product", "payment_intent"],
     });
 
     const status = session.status;
@@ -29,6 +105,8 @@ export default async function Success({ searchParams }: SuccessProps) {
     }
 
     if (status === "complete") {
+      // Fallback: save order if webhook hasn't saved it yet
+      await ensureOrderSaved(session);
       return (
         <div className="container mt-10 mb-20 mx-auto flex flex-col items-center justify-center max-w-sm lg:max-w-lg">
           {/* Clear cart when arriving at success page */}
@@ -45,13 +123,8 @@ export default async function Success({ searchParams }: SuccessProps) {
             Payment Successful!
           </p>
           <p className="text-sm font-normal leading-normal  text-center mt-2 text-stone-500 ">
-            Thank you for your order! Your order
-            <span className="font-semibold text-cyan-700 break-all">
-              {" "}
-              #{session_id}
-            </span>{" "}
-            has been placed and is on its way. You'll receive an email
-            confirmation shortly.
+            Thank you for your order! Your order has been placed and is on its
+            way. You'll receive an email confirmation shortly.
           </p>
           <a
             href="/"
@@ -66,7 +139,7 @@ export default async function Success({ searchParams }: SuccessProps) {
                 href="mailto:support@example.com"
                 className="text-cyan-600 hover:underline"
               >
-                support@example.com
+                support@minicom.com
               </a>
             </p>
           </div>
