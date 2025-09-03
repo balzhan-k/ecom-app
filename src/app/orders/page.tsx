@@ -98,7 +98,7 @@ export default function OrdersPage() {
           </Link>
         </div>
       ) : (
-        <ul className="space-y-4">
+        <ul className="space-y-4 mb-20">
           {orders.map((order) => (
             <li key={order.id} className="bg-white p-4 rounded shadow">
               <div className="flex items-center justify-between">
