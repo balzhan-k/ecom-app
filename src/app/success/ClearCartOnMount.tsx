@@ -13,7 +13,7 @@ export default function ClearCartOnMount() {
       clearCart();
     }
     // Run only once on mount
-  }, []);
+  }, [clearCart]);
 
   return null;
 }

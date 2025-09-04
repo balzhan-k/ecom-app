@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { loadStripe } from "@stripe/stripe-js";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import QuantityControl from "@/components/common/QuantityControl";
@@ -10,10 +9,6 @@ import { formatPrice } from "@/utils/formatters";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-);
 
 export default function CartPage() {
   const {
@@ -67,8 +62,8 @@ export default function CartPage() {
           Your bag is empty
         </p>
         <p className="text-sm font-normal leading-normal  text-center mt-2 text-stone-500">
-          Looks like you haven't added anything to your bag yet. Let's find
-          something you love!
+          Looks like you haven&apos;t added anything to your bag yet. Let&apos;s
+          find something you love!
         </p>
         <Link
           href="/"

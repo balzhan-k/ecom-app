@@ -3,6 +3,8 @@ import { stripe } from "@/lib/stripe";
 import Image from "next/image";
 import ClearCartOnMount from "./ClearCartOnMount";
 import admin from "firebase-admin";
+import Link from "next/link";
+import type Stripe from "stripe";
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -14,9 +16,11 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
-async function ensureOrderSaved(session: any) {
+async function ensureOrderSaved(
+  session: Stripe.Response<Stripe.Checkout.Session>
+) {
   try {
-    const userId = session?.metadata?.userId as string | undefined;
+    const userId = session.metadata?.userId as string | undefined;
     if (!userId) return; // only save for authenticated users
 
     // Skip if already saved
@@ -28,45 +32,63 @@ async function ensureOrderSaved(session: any) {
     if (!existing.empty) return;
 
     const items = await Promise.all(
-      (session.line_items?.data || []).map(async (lineItem: any) => {
-        const stripeProduct = lineItem.price?.product as
-          | { id?: string; name?: string }
-          | undefined;
-        let firebaseProductId: string | undefined;
-        let firebaseProductName: string =
-          stripeProduct?.name || "Unknown Product";
+      (session.line_items?.data ?? []).map(
+        async (lineItem: Stripe.LineItem) => {
+          const price = lineItem.price; // Stripe.Price | null
+          const productRef = price?.product ?? null; // string | Stripe.Product | Stripe.DeletedProduct | null
 
-        if (stripeProduct?.id) {
-          const productQuery = await db
-            .collection("products")
-            .where("stripeProductId", "==", stripeProduct.id)
-            .limit(1)
-            .get();
-          if (!productQuery.empty) {
-            const productDoc = productQuery.docs[0];
-            firebaseProductId = productDoc.id;
-            const productData = productDoc.data() as any;
-            firebaseProductName = productData?.title || firebaseProductName;
+          let stripeProductId: string | undefined;
+          let firebaseProductName: string = "Unknown Product";
+          if (
+            productRef &&
+            typeof productRef === "object" &&
+            "name" in productRef
+          ) {
+            firebaseProductName = (productRef as Stripe.Product).name;
           }
-        }
 
-        return {
-          productId: firebaseProductId || stripeProduct?.id || "unknown",
-          productName: firebaseProductName,
-          quantity: lineItem.quantity || 0,
-          price: (lineItem.price?.unit_amount || 0) / 100,
-          totalPrice:
-            ((lineItem.price?.unit_amount || 0) * (lineItem.quantity || 0)) /
-            100,
-        };
-      })
+          if (productRef) {
+            if (typeof productRef === "string") {
+              stripeProductId = productRef;
+            } else {
+              stripeProductId = productRef.id;
+            }
+
+            if (stripeProductId) {
+              const productQuery = await db
+                .collection("products")
+                .where("stripeProductId", "==", stripeProductId)
+                .limit(1)
+                .get();
+              if (!productQuery.empty) {
+                const productDoc = productQuery.docs[0];
+                const productData = productDoc.data();
+                firebaseProductName = productData?.title || firebaseProductName;
+                // Prefer Firestore doc id when found
+                stripeProductId = productDoc.id;
+              }
+            }
+          }
+
+          const unitAmount = price?.unit_amount ?? 0; // number | null -> number
+          const quantity = lineItem.quantity ?? 0;
+
+          return {
+            productId: stripeProductId || "unknown",
+            productName: firebaseProductName,
+            quantity,
+            price: unitAmount / 100,
+            totalPrice: (unitAmount * quantity) / 100,
+          };
+        }
+      )
     );
 
     const orderData = {
       userId,
       sessionId: session.id,
       items,
-      totalAmount: (session.amount_total || 0) / 100,
+      totalAmount: (session.amount_total ?? 0) / 100,
       currency: session.currency || "usd",
       status: "completed",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -93,12 +115,16 @@ export default async function Success({ searchParams }: SuccessProps) {
   }
 
   try {
-    const session = await stripe.checkout.sessions.retrieve(session_id, {
-      expand: ["line_items", "line_items.data.price.product", "payment_intent"],
-    });
+    const session: Stripe.Response<Stripe.Checkout.Session> =
+      await stripe.checkout.sessions.retrieve(session_id, {
+        expand: [
+          "line_items",
+          "line_items.data.price.product",
+          "payment_intent",
+        ],
+      });
 
     const status = session.status;
-    const customerEmail = session.customer_details?.email;
 
     if (status === "open") {
       return redirect("/");
@@ -124,14 +150,14 @@ export default async function Success({ searchParams }: SuccessProps) {
           </p>
           <p className="text-sm font-normal leading-normal  text-center mt-2 text-stone-500 ">
             Thank you for your order! Your order has been placed and is on its
-            way. You'll receive an email confirmation shortly.
+            way. You&apos;ll receive an email confirmation shortly.
           </p>
-          <a
+          <Link
             href="/"
             className="bg-cyan-700 hover:bg-cyan-800 text-white px-6 py-3 rounded-lg transition-colors mt-4 font-semibold"
           >
             Continue shopping
-          </a>
+          </Link>
           <div className="text-sm text-gray-500 mt-6 text-center">
             <p>
               If you have any questions, please contact our support:{" "}
@@ -156,12 +182,12 @@ export default async function Success({ searchParams }: SuccessProps) {
           <p className="text-gray-600 text-lg mb-6">
             Your payment is being processed. Status: {status}
           </p>
-          <a
+          <Link
             href="/"
             className="inline-block bg-cyan-700 text-white px-6 py-3 rounded-lg hover:bg-cyan-800 transition-colors font-semibold"
           >
             Continue Shopping
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -176,12 +202,12 @@ export default async function Success({ searchParams }: SuccessProps) {
           <p className="text-gray-600 text-lg mb-6">
             Unable to verify your payment status. Please contact support.
           </p>
-          <a
+          <Link
             href="/"
             className="inline-block bg-cyan-700 text-white px-6 py-3 rounded-lg hover:bg-cyan-800 transition-colors font-semibold"
           >
             Continue Shopping
-          </a>
+          </Link>
         </div>
       </div>
     );

@@ -1,5 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import admin from "firebase-admin";
+import { Product } from "@/types/product";
+import { Timestamp } from "firebase-admin/firestore";
+
+interface OrderItem {
+  productId: string;
+  thumbnail?: string;
+  [key: string]: unknown;
+}
+
+interface Order {
+  id: string;
+  createdAt: Timestamp;
+  items: OrderItem[];
+  [key: string]: unknown;
+}
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -28,17 +43,17 @@ export async function GET(request: NextRequest) {
       .get();
 
     const ordersRaw = snap.docs
-      .map((doc) => ({ id: doc.id, ...doc.data() }))
-      .sort((a: any, b: any) => {
+      .map((doc) => ({ id: doc.id, ...doc.data() }) as unknown as Order)
+      .sort((a, b) => {
         const at = a?.createdAt?.seconds ?? 0;
         const bt = b?.createdAt?.seconds ?? 0;
         return bt - at;
       });
 
     const orders = await Promise.all(
-      ordersRaw.map(async (order: any) => {
+      ordersRaw.map(async (order) => {
         const items = await Promise.all(
-          (order.items || []).map(async (item: any) => {
+          (order.items || []).map(async (item) => {
             if (item.thumbnail) return item;
             let thumbnail: string | undefined;
             try {
@@ -48,7 +63,7 @@ export async function GET(request: NextRequest) {
                   .doc(item.productId)
                   .get();
                 if (prodDoc.exists) {
-                  const data = prodDoc.data() as any;
+                  const data = prodDoc.data() as Product;
                   if (Array.isArray(data?.images) && data.images.length > 0) {
                     thumbnail = data.images[0];
                   }

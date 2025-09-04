@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { UserIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { UserIcon } from "@heroicons/react/24/outline";
 import { UserMenu } from "./UserMenu";
 import { CartIcon } from "./CartIcon";
 import { SearchInput } from "@/components/common/SearchInput";

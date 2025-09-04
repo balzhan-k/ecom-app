@@ -7,9 +7,6 @@ import Link from "next/link";
 import ProductCardBase from "@/components/products/ProductCardBase";
 import { getAllProducts } from "@/utils/products";
 import { PlusIcon, PencilIcon, TrashIcon } from "lucide-react";
-import {
-  calculateDiscountedPrice,
-} from "@/utils/formatters";
 import { Product } from "@/types/product";
 
 export default function AdminDashboard() {
@@ -69,7 +66,7 @@ export default function AdminDashboard() {
     <div className="container mx-auto py-4 pb-20">
       <div className="flex justify-between items-center mb-8">
         <h1 className="tracking-light text-2xl font-bold leading-tight text-cyan-700 py-2">
-         Your Dashboard
+          Your Dashboard
         </h1>
         <Link
           href="/admin/products/new"
@@ -89,15 +86,6 @@ export default function AdminDashboard() {
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-20">
           {products.map((product) => {
-            const discounted = calculateDiscountedPrice(
-              product.price,
-              product.discountPercentage
-            );
-            const imageUrl =
-              product.images && product.images.length > 0
-                ? product.images[0]
-                : "/placeholder.jpg";
-
             return (
               <ProductCardBase
                 key={product.id}

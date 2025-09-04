@@ -62,8 +62,8 @@ export default function WelcomeEmail({ name }: WelcomeEmailProps) {
         <Container style={container}>
           <Heading style={heading}>Welcome to MiniCom!</Heading>
           <Text style={text}>
-            Hi{userGreeting}, thanks for signing up. We're excited to have you
-            on board.
+            Hi{userGreeting}, thanks for signing up. We&apos;re excited to have
+            you on board.
           </Text>
           <Button
             style={button}

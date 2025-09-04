@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firebase";
 import Link from "next/link";
+import Image from "next/image";
 
 interface OrderItem {
   productId: string;
@@ -40,7 +41,7 @@ export default function OrdersPage() {
         });
         if (!res.ok) throw new Error("Failed to fetch orders");
         const json = await res.json();
-        const data: OrderDoc[] = (json.orders || []).map((o: any) => ({
+        const data: OrderDoc[] = (json.orders || []).map((o: OrderDoc) => ({
           id: o.id,
           createdAt: o.createdAt ?? null,
           status: o.status,
@@ -132,10 +133,11 @@ export default function OrdersPage() {
                     >
                       {/* thumbnail */}
                       {item.thumbnail ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
                           src={item.thumbnail}
                           alt={item.productName}
+                          width={80}
+                          height={80}
                           className="w-20 h-20 object-cover rounded-lg mr-4"
                         />
                       ) : (

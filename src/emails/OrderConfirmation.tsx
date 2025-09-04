@@ -76,7 +76,7 @@ export default function OrderConfirmationEmail({
         <Container style={container}>
           <Heading style={heading}>Your Order is Confirmed!</Heading>
           <Text style={text}>
-            Thank you for your purchase. We've received your order and are
+            Thank you for your purchase. We&apos;ve received your order and are
             getting it ready.
           </Text>
           <Text style={{ ...text, fontWeight: "bold" }}>

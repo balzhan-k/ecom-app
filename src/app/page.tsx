@@ -1,6 +1,7 @@
 import CategoryCard from "@/components/categories/CategoryCard";
 import { Category } from "@/types/product";
 import DiscountedProducts from "@/components/common/FeaturedProducts";
+import Image from "next/image";
 
 export default function HomePage() {
   const categories = Object.values(Category);
@@ -23,9 +24,11 @@ export default function HomePage() {
             </div>
 
             <div className="relative">
-              <img
+              <Image
                 src="/hero1png.jpg"
                 alt="Beautiful workspace with stationery"
+                width={500}
+                height={500}
                 className="w-full h-auto rounded-2xl shadow-lg object-cover"
               />
             </div>
@@ -35,9 +38,7 @@ export default function HomePage() {
 
       <section className="pt-16 pb-8">
         <div className="container mx-auto">
-          <h2 className="text-xl font-bold text-cyan-700 mb-6">
-            Categories
-          </h2>
+          <h2 className="text-xl font-bold text-cyan-700 mb-6">Categories</h2>
           <div className="grid grid-cols-3 md:grid-cols-5 gap-4 sm:gap-6 mb-15">
             {categories.map((category) => (
               <CategoryCard key={category} category={category} />
