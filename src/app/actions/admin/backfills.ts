@@ -1,9 +1,19 @@
 "use server";
 
-import { collections, db } from "@/lib/firebase";
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import admin from "firebase-admin";
 import { stripe } from "@/lib/stripe";
 import { toCents } from "@/utils/formatters";
+
+// Initialize Firebase Admin if not already initialized
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(
+      JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY!)
+    ),
+  });
+}
+
+const db = admin.firestore();
 
 export async function backfillStripeIds(): Promise<{
   total: number;
@@ -12,8 +22,7 @@ export async function backfillStripeIds(): Promise<{
   errors: number;
   details: string[];
 }> {
-  const productsRef = collection(db, collections.products);
-  const snapshot = await getDocs(productsRef);
+  const snapshot = await db.collection("products").get();
 
   const total = snapshot.size;
   let updated = 0;
@@ -79,7 +88,7 @@ export async function backfillStripeIds(): Promise<{
       }
 
       if (needsUpdate) {
-        await updateDoc(doc(db, collections.products, productId), {
+        await db.collection("products").doc(productId).update({
           stripeProductId,
           stripePriceId,
         });
