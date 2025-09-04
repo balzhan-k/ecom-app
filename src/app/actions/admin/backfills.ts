@@ -4,7 +4,12 @@ import admin from "firebase-admin";
 import type { ServiceAccount } from "firebase-admin";
 import { stripe } from "@/lib/stripe";
 import { toCents } from "@/utils/formatters";
-import serviceAccount from "../../../../serviceAccountKey.json";
+import fs from "fs";
+import path from "path";
+
+const serviceAccount = JSON.parse(
+  fs.readFileSync(path.join(process.cwd(), "serviceAccountKey.json"), "utf8")
+);
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
