@@ -102,13 +102,13 @@ async function ensureOrderSaved(
 }
 
 interface SuccessProps {
-  searchParams: {
+  searchParams: Promise<{
     session_id?: string;
-  };
+  }>;
 }
 
 export default async function Success({ searchParams }: SuccessProps) {
-  const { session_id } = searchParams || {};
+  const { session_id } = await searchParams;
 
   if (!session_id) {
     throw new Error("Please provide a valid session_id (`cs_test_...`)");
