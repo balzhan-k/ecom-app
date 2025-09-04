@@ -14,6 +14,7 @@
     "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.1.1",
+    "@react-email/components": "^0.5.1",
     "@stripe/stripe-js": "^7.8.0",
     "@vercel/blob": "^1.1.1",
     "firebase": "^11.10.0",
@@ -23,6 +24,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.59.0",
+    "resend": "^6.0.2",
     "stripe": "^18.4.0",
     "zod": "^3.25.76"
   },

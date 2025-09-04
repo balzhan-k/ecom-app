@@ -126,7 +126,29 @@ async function handleCheckoutSessionCompleted(
     const userId = session.metadata?.userId;
     if (userId) {
       console.log(`👤 Saving order for user: ${userId}`);
-      await saveOrderToHistory(fullSession, userId);
+      const orderData = await saveOrderToHistory(fullSession, userId);
+
+      // Send order confirmation email
+      const customerEmail = session.customer_details?.email;
+      if (customerEmail && orderData) {
+        try {
+          // We can call the API route, but calling Resend directly is more efficient here.
+          await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/emails/order`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: customerEmail,
+              orderId: orderData.sessionId,
+              items: orderData.items,
+              totalAmount: orderData.totalAmount,
+              currency: orderData.currency,
+            }),
+          });
+          console.log(`📧 Order confirmation email sent to ${customerEmail}`);
+        } catch (error) {
+          console.error("❌ Failed to send order confirmation email:", error);
+        }
+      }
     } else {
       console.log("👤 Order from unauthenticated user");
     }
@@ -271,6 +293,7 @@ async function saveOrderToHistory(
     // Save to orders collection
     await db.collection("orders").add(orderData);
     console.log("✅ Order saved to user history");
+    return orderData; // Return the created order data
   } catch (error) {
     console.error("❌ Error saving order:", error);
     throw error;
