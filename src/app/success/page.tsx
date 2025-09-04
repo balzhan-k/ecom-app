@@ -108,7 +108,7 @@ interface SuccessProps {
 }
 
 export default async function Success({ searchParams }: SuccessProps) {
-  const { session_id } = await searchParams;
+  const { session_id } = searchParams || {};
 
   if (!session_id) {
     throw new Error("Please provide a valid session_id (`cs_test_...`)");
