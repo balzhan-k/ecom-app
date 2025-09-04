@@ -6,11 +6,22 @@ import { toCents } from "@/utils/formatters";
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(
-      JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY!)
-    ),
-  });
+  const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+
+  if (!serviceAccountKey) {
+    throw new Error(
+      "FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set"
+    );
+  }
+
+  try {
+    const serviceAccount = JSON.parse(serviceAccountKey);
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+  } catch (error) {
+    throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY: ${error}`);
+  }
 }
 
 const db = admin.firestore();
