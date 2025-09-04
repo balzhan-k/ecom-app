@@ -1,27 +1,16 @@
 "use server";
 
 import admin from "firebase-admin";
+import type { ServiceAccount } from "firebase-admin";
 import { stripe } from "@/lib/stripe";
 import { toCents } from "@/utils/formatters";
+import serviceAccount from "../../../../serviceAccountKey.json";
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
-  const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-
-  if (!serviceAccountKey) {
-    throw new Error(
-      "FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set"
-    );
-  }
-
-  try {
-    const serviceAccount = JSON.parse(serviceAccountKey);
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
-  } catch (error) {
-    throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY: ${error}`);
-  }
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount as ServiceAccount),
+  });
 }
 
 const db = admin.firestore();
