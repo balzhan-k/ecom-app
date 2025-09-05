@@ -3,19 +3,19 @@ import { stripe } from "@/lib/stripe";
 import Image from "next/image";
 import ClearCartOnMount from "./ClearCartOnMount";
 import admin from "firebase-admin";
+import type { ServiceAccount } from "firebase-admin";
 import Link from "next/link";
 import type Stripe from "stripe";
+import fs from "fs";
+import path from "path";
 
 if (!admin.apps.length) {
   const serviceAccount = JSON.parse(
-    require("fs").readFileSync(
-      require("path").join(process.cwd(), "serviceAccountKey.json"),
-      "utf8"
-    )
+    fs.readFileSync(path.join(process.cwd(), "serviceAccountKey.json"), "utf8")
   );
 
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert(serviceAccount as ServiceAccount),
   });
 }
 
