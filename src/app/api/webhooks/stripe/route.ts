@@ -4,10 +4,15 @@ import admin from "firebase-admin";
 
 // Initialize Firebase Admin SDK if not already initialized
 if (!admin.apps.length) {
+  const serviceAccount = JSON.parse(
+    require("fs").readFileSync(
+      require("path").join(process.cwd(), "serviceAccountKey.json"),
+      "utf8"
+    )
+  );
+
   admin.initializeApp({
-    credential: admin.credential.cert(
-      JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY!)
-    ),
+    credential: admin.credential.cert(serviceAccount),
   });
 }
 
