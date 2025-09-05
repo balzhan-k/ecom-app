@@ -1,9 +1,10 @@
+import Link from "next/link";
+
 export default function CancelPage() {
   return (
     <div className="container mx-auto p-8 min-h-screen">
       <div className="max-w-2xl mx-auto text-center">
         <div className="mb-8">
-         
           <h1 className="text-3xl font-bold text-red-700 mb-4">
             Payment Cancelled
           </h1>
@@ -13,19 +14,19 @@ export default function CancelPage() {
         </div>
 
         <div className="space-y-4">
-          <a
+          <Link
             href="/cart"
             className="inline-block bg-cyan-700 text-white px-6 py-3 rounded-lg hover:bg-cyan-800 transition-colors font-semibold"
           >
             Return to Cart
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/"
             className="inline-block bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors font-semibold ml-4"
           >
             Continue Shopping
-          </a>
+          </Link>
 
           <div className="text-sm text-gray-500 mt-6">
             <p>

@@ -60,17 +60,8 @@ export function UserMenu() {
                 </button>
               </>
             ) : (
-              // Меню для обычных пользователей
+              // Меню для пользователей: только My Orders
               <>
-                <button
-                  onClick={() => {
-                    router.push("/profile");
-                    setIsOpen(false);
-                  }}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Profile
-                </button>
                 <button
                   onClick={() => {
                     router.push("/orders");

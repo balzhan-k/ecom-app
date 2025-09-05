@@ -21,11 +21,15 @@ export function formatNumber(value: number | undefined): string {
   return "N/A";
 }
 
-export function formatDimensions(dimensions: {
-  width?: number;
-  height?: number;
-  depth?: number;
-}): string {
+export function formatDimensions(
+  dimensions:
+    | {
+        width?: number;
+        height?: number;
+        depth?: number;
+      }
+    | undefined
+): string {
   if (typeof dimensions === "object" && dimensions?.width !== undefined) {
     return `W: ${dimensions.width ?? "N/A"}cm, H: ${
       dimensions.height ?? "N/A"
@@ -34,7 +38,9 @@ export function formatDimensions(dimensions: {
   return "N/A";
 }
 
-export function formatText(value: string | number | boolean): string {
+export function formatText(
+  value: string | number | boolean | undefined
+): string {
   if (value === null || value === undefined || value === "") {
     return "N/A";
   }

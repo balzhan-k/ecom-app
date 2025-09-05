@@ -8,6 +8,7 @@ import {
   ShoppingCartIcon,
   UserIcon,
   ShieldCheckIcon,
+  ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
 
 export default function MobileTabBar() {
@@ -23,11 +24,9 @@ export default function MobileTabBar() {
     ...(userData?.role === "admin"
       ? [{ href: "/admin", icon: ShieldCheckIcon, label: "Admin" }]
       : []),
-    {
-      href: user ? "/profile" : "/login",
-      icon: UserIcon,
-      label: user ? "Profile" : "Login",
-    },
+    ...(user
+      ? [{ href: "/orders", icon: ClipboardDocumentListIcon, label: "Orders" }]
+      : [{ href: "/login", icon: UserIcon, label: "Login" }]),
     { href: "/cart", icon: ShoppingCartIcon, label: "Cart" },
   ];
 

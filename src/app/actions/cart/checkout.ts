@@ -1,17 +1,9 @@
 "use server";
 
 import Stripe from "stripe";
-import admin from "firebase-admin";
+import { initializeFirebaseAdmin } from "@/lib/firebase-admin";
 
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(
-      JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY!)
-    ),
-  });
-}
-
-const db = admin.firestore();
+const db = initializeFirebaseAdmin();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-07-30.basil",
@@ -24,6 +16,7 @@ export interface CheckoutItem {
 
 export async function createCheckoutSession(
   items: CheckoutItem[],
+  userId?: string, // Добавлен userId
   origin?: string
 ) {
   try {
@@ -43,19 +36,16 @@ export async function createCheckoutSession(
       if (
         !productData ||
         typeof productData.price !== "number" ||
-        typeof productData.title !== "string"
+        typeof productData.title !== "string" ||
+        typeof productData.stripePriceId !== "string" // Добавлена проверка на stripePriceId
       ) {
-        throw new Error(`Invalid product data for ID ${productId}.`);
+        throw new Error(
+          `Invalid product data for ID ${productId}. Missing price or title.`
+        );
       }
 
       lineItems.push({
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: productData.title,
-          },
-          unit_amount: Math.round(productData.price * 100), 
-        },
+        price: productData.stripePriceId, // Используем stripePriceId
         quantity: quantity,
       });
     }
@@ -69,6 +59,7 @@ export async function createCheckoutSession(
       mode: "payment",
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/cancel`,
+      ...(userId && { metadata: { userId } }), // Условно добавляем userId в метаданные
     });
 
     return {

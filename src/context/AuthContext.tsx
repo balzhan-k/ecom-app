@@ -66,9 +66,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         role: "user",
         createdAt: new Date(),
       };
-
       await setDoc(userRef, newUserData);
       setUserData(newUserData);
+
+      // Send welcome email for new users
+      try {
+        fetch("/api/emails/welcome", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: user.email,
+            name: user.displayName,
+          }),
+        });
+      } catch (error) {
+        console.error("Failed to send welcome email:", error);
+      }
     } else {
       setUserData(userDoc.data() as UserData);
     }

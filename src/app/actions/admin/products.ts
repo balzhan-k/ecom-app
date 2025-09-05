@@ -203,6 +203,9 @@ export async function addNewProductAction(
   }
 }
 
+// Backward-compatible export for components importing `AddNewProductAction`
+export { addNewProductAction as AddNewProductAction };
+
 async function deleteImagesFromBlob(imageUrls: string[]) {
   const deletePromises = imageUrls.map(async (url) => {
     try {
