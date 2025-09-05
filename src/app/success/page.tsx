@@ -2,24 +2,12 @@ import { redirect } from "next/navigation";
 import { stripe } from "@/lib/stripe";
 import Image from "next/image";
 import ClearCartOnMount from "./ClearCartOnMount";
-import admin from "firebase-admin";
-import type { ServiceAccount } from "firebase-admin";
 import Link from "next/link";
 import type Stripe from "stripe";
-import fs from "fs";
-import path from "path";
+import { initializeFirebaseAdmin } from "@/lib/firebase-admin";
+import admin from "firebase-admin";
 
-if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(
-    fs.readFileSync(path.join(process.cwd(), "serviceAccountKey.json"), "utf8")
-  );
-
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as ServiceAccount),
-  });
-}
-
-const db = admin.firestore();
+const db = initializeFirebaseAdmin();
 
 async function ensureOrderSaved(
   session: Stripe.Response<Stripe.Checkout.Session>

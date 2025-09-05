@@ -1,22 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { initializeFirebaseAdmin } from "@/lib/firebase-admin";
 import admin from "firebase-admin";
-import type { ServiceAccount } from "firebase-admin";
-import fs from "fs";
-import path from "path";
 
-// Initialize Firebase Admin SDK if not already initialized
-if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(
-    fs.readFileSync(path.join(process.cwd(), "serviceAccountKey.json"), "utf8")
-  );
-
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as ServiceAccount),
-  });
-}
-
-const db = admin.firestore();
+const db = initializeFirebaseAdmin();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-07-30.basil",

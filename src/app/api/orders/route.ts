@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import admin from "firebase-admin";
-import type { ServiceAccount } from "firebase-admin";
 import { Product } from "@/types/product";
 import { Timestamp } from "firebase-admin/firestore";
-import fs from "fs";
-import path from "path";
+import { initializeFirebaseAdmin } from "@/lib/firebase-admin";
+import admin from "firebase-admin";
 
 interface OrderItem {
   productId: string;
@@ -19,17 +17,7 @@ interface Order {
   [key: string]: unknown;
 }
 
-if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(
-    fs.readFileSync(path.join(process.cwd(), "serviceAccountKey.json"), "utf8")
-  );
-
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as ServiceAccount),
-  });
-}
-
-const db = admin.firestore();
+const db = initializeFirebaseAdmin();
 
 export async function GET(request: NextRequest) {
   try {
