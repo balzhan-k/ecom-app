@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { DeleteProductAction } from "@/app/actions/admin/products";
 import { getProductById } from "@/utils/products";
-import { useEffect } from "react";
 import { Product } from "@/types/product";
 import { TrashIcon, ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
