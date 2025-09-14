@@ -51,7 +51,7 @@ export default function CartPage() {
     return (
       <div className="container mt-10 mb-20 mx-auto flex flex-col items-center justify-center">
         <Image
-          src="/shoppingBag.jpg"
+          src="/cart-main-banner.jpg"
           alt="Shopping Bag"
           width={480}
           height={480}

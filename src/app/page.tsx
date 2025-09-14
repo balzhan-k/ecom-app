@@ -24,7 +24,7 @@ export default function HomePage() {
 
             <div className="relative">
               <Image
-                src="/hero1png.jpg"
+                src="/home-main-banner.jpg"
                 alt="Beautiful workspace with stationery"
                 width={500}
                 height={500}

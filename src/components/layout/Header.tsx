@@ -23,7 +23,7 @@ export default function Header() {
               className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
             >
               <Image
-                src="/logo.jpg"
+                src="/logo-brand-header.jpg"
                 alt="MiniCom Logo"
                 width={0}
                 height={0}
@@ -101,7 +101,6 @@ export default function Header() {
             />
 
             <div className="hidden md:flex items-center gap-5">
-
               {user ? (
                 <UserMenu />
               ) : (

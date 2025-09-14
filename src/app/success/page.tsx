@@ -127,7 +127,7 @@ export default async function Success({ searchParams }: SuccessProps) {
         <div className="container mt-10 mb-20 mx-auto flex flex-col items-center justify-center max-w-sm lg:max-w-lg">
           <ClearCartOnMount />
           <Image
-            src="/shoppingBag.jpg"
+            src="/cart-main-banner.jpg"
             alt="Shopping Bag"
             width={480}
             height={480}
