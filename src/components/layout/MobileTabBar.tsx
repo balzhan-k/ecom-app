@@ -16,7 +16,6 @@ export default function MobileTabBar() {
   const { user, userData } = useAuth();
   const { getTotalItems } = useCart();
 
-  // Получаем общее количество товаров в корзине
   const totalItems = getTotalItems();
 
   const tabs = [
@@ -51,7 +50,6 @@ export default function MobileTabBar() {
                 }`}
               />
 
-              {/* Счетчик товаров для корзины */}
               {isCart && totalItems > 0 && (
                 <span className="absolute -top-2 -right-2 bg-cyan-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium">
                   {totalItems > 99 ? "99+" : totalItems}

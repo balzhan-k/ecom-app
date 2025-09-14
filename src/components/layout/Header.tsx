@@ -90,12 +90,10 @@ export default function Header() {
               Organizers
             </Link>
 
-            {/* Поиск */}
             <SearchInput size="md" />
           </nav>
 
           <div className="flex items-center gap-3">
-            {/* Поиск для мобильных/планшетов */}
             <SearchInput
               size="sm"
               placeholder="Search..."

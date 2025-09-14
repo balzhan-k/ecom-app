@@ -7,7 +7,6 @@ export default function HomePage() {
   const categories = Object.values(Category);
   return (
     <main>
-      {/* Hero Section */}
       <section className="bg-yellow-50 px-4 py-16 lg:py-24 mt-5 rounded-2xl">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center px-4 md:px-10">

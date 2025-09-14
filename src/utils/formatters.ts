@@ -1,4 +1,3 @@
-// Utility functions for formatting product data
 
 export function formatPrice(price: number | undefined): string {
   if (typeof price === "number") {

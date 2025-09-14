@@ -39,7 +39,7 @@ export default function ProductPage({
   }, [params]);
 
   if (loading) {
-    return null; // Next.js автоматически покажет loading.tsx
+    return null; 
   }
 
   if (!product) {

@@ -12,9 +12,8 @@ export interface Product {
 
   material?: string;
   color?: string;
-  packQuantity?: number; // e.g., 10 (for 10-pack pens), 3 (for 3-pack notebooks)
-  pageCount?: number; // For notebooks (e.g., 80, 100, 120)
-
+  packQuantity?: number; 
+  pageCount?: number; 
   warrantyInformation: string;
   shippingInformation: string;
   availabilityStatus: string;

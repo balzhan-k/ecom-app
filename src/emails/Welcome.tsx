@@ -29,18 +29,18 @@ const heading = {
   fontSize: "28px",
   fontWeight: "bold",
   marginTop: "48px",
-  color: "#0e7490", // cyan-700 from tailwind
+  color: "#0e7490", 
 };
 
 const text = {
   margin: "24px 0",
-  color: "#52525b", // stone-600 from tailwind
+  color: "#52525b",
   fontSize: "16px",
   lineHeight: "26px",
 };
 
 const button = {
-  backgroundColor: "#0e7490", // cyan-700
+  backgroundColor: "#0e7490", 
   borderRadius: "5px",
   color: "#fff",
   fontSize: "16px",

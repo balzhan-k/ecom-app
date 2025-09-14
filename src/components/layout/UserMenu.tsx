@@ -47,7 +47,6 @@ export function UserMenu() {
             </div>
 
             {userData?.role === "admin" ? (
-              // Меню для админов
               <>
                 <button
                   onClick={() => {
@@ -60,7 +59,6 @@ export function UserMenu() {
                 </button>
               </>
             ) : (
-              // Меню для пользователей: только My Orders
               <>
                 <button
                   onClick={() => {

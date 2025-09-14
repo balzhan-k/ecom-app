@@ -26,7 +26,6 @@ export function AuthForm({
     e.preventDefault();
     setError("");
 
-    // Валидация
     if (!email || !password) {
       setError("Please fill in all fields");
       return;

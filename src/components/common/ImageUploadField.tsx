@@ -26,7 +26,7 @@ export default function ImageUploadField({
       filesArray.map(async (file) => {
         if (!acceptedFileTypes.includes(file.type)) {
           alert("Only JPEG, JPG, or WEBP files can be uploaded.");
-          return null; // Return null for invalid file types
+          return null; 
         }
 
         const localUrl = URL.createObjectURL(file);
@@ -68,7 +68,6 @@ export default function ImageUploadField({
   return (
     <div>
       <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 transition-colors">
-        {/* Кнопка для выбора файлов */}
         <input
           type="file"
           id="photoUpload"
@@ -89,7 +88,6 @@ export default function ImageUploadField({
           {hintText} You can upload multiple photos.
         </p>
 
-        {/* Превьюшки */}
         {previewUrls.length > 0 && (
           <div className="grid grid-cols-2 gap-4 w-full mb-4">
             {previewUrls.map((url, idx) => (
