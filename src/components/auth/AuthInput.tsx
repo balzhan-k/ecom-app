@@ -5,6 +5,7 @@ interface AuthInputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
   required?: boolean;
+  id: string; // Add id prop
 }
 
 export function AuthInput({
@@ -14,11 +15,15 @@ export function AuthInput({
   onChange,
   placeholder,
   required,
+  id,
 }: AuthInputProps) {
   return (
     <div className="flex flex-col mb-4">
-      <label className="font-semibold mb-2 text-cyan-700">{label}</label>
+      <label htmlFor={id} className="font-semibold mb-2 text-cyan-700">
+        {label}
+      </label>
       <input
+        id={id}
         type={type}
         value={value}
         onChange={onChange}

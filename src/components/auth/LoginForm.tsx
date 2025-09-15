@@ -50,7 +50,7 @@ export function LoginForm() {
 
   return (
     <AuthForm
-      mode="login"
+      type="login"
       onSubmit={handleLogin}
       onGoogleAuth={handleGoogleLogin}
       loading={loading || authLoading}

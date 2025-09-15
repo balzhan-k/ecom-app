@@ -5,14 +5,14 @@ import Button from "@/components/common/Button";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 
 interface AuthFormProps {
-  mode: "login" | "register";
+  type: "login" | "register";
   onSubmit: (email: string, password: string) => Promise<void>;
   onGoogleAuth: () => Promise<void>;
   loading: boolean;
 }
 
 export function AuthForm({
-  mode,
+  type,
   onSubmit,
   onGoogleAuth,
   loading,
@@ -31,12 +31,12 @@ export function AuthForm({
       return;
     }
 
-    if (mode === "register" && password !== confirmPassword) {
+    if (type === "register" && password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
 
-    if (mode === "register" && password.length < 6) {
+    if (type === "register" && password.length < 6) {
       setError("Password must be at least 6 characters long");
       return;
     }
@@ -48,11 +48,11 @@ export function AuthForm({
     }
   };
 
-  const title = mode === "login" ? "Sign In" : "Create Account";
-  const submitText = mode === "login" ? "Sign In" : "Sign Up";
+  const title = type === "login" ? "Sign In" : "Create Account";
+  const submitText = type === "login" ? "Sign In" : "Sign Up";
   const switchText =
-    mode === "login" ? "Don't have an account?" : "Already have an account?";
-  const switchLink = mode === "login" ? "/register" : "/login";
+    type === "login" ? "Don't have an account?" : "Already have an account?";
+  const switchLink = type === "login" ? "/register" : "/login";
 
   return (
     <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md border border-gray-200">
@@ -60,7 +60,12 @@ export function AuthForm({
         {title}
       </h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4"
+        data-testid="auth-form"
+        noValidate
+      >
         <AuthInput
           label="Email"
           type="email"
@@ -70,6 +75,7 @@ export function AuthForm({
           }
           placeholder="Enter your email"
           required
+          id="email"
         />
 
         <AuthInput
@@ -81,9 +87,10 @@ export function AuthForm({
           }
           placeholder="Enter your password"
           required
+          id="password"
         />
 
-        {mode === "register" && (
+        {type === "register" && (
           <AuthInput
             label="Confirm Password"
             type="password"
@@ -93,6 +100,7 @@ export function AuthForm({
             }
             placeholder="Repeat your password"
             required
+            id="confirm-password"
           />
         )}
 
@@ -132,7 +140,7 @@ export function AuthForm({
           href={switchLink}
           className="text-cyan-700 hover:text-cyan-800 font-medium"
         >
-          {mode === "login" ? "Sign Up" : "Sign In"}
+          {type === "login" ? "Sign Up" : "Sign In"}
         </a>
       </div>
     </div>

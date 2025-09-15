@@ -48,7 +48,7 @@ export function RegisterForm() {
 
   return (
     <AuthForm
-      mode="register"
+      type="register"
       onSubmit={handleRegister}
       onGoogleAuth={handleGoogleLogin}
       loading={loading || authLoading}
