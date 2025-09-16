@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AuthForm } from "@/components/auth/AuthForm";
 
@@ -8,6 +8,29 @@ const onGoogleAuthMock = jest.fn();
 const loadingMock = false;
 
 describe("AuthForm", () => {
+  it("snapshot for login form", () => {
+    render(
+      <AuthForm
+        type={"login"}
+        onSubmit={onSubmitMock}
+        onGoogleAuth={onGoogleAuthMock}
+        loading={loadingMock}
+      />
+    );
+    expect(screen.getByTestId("auth-form")).toMatchSnapshot();
+  });
+  it("snapshot for register form", () => {
+    render(
+      <AuthForm
+        type={"register"}
+        onSubmit={onSubmitMock}
+        onGoogleAuth={onGoogleAuthMock}
+        loading={loadingMock}
+      />
+    );
+    expect(screen.getByTestId("auth-form")).toMatchSnapshot();
+  });
+
   beforeEach(() => {
     onSubmitMock.mockClear();
     onGoogleAuthMock.mockClear();

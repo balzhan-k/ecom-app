@@ -34,7 +34,7 @@ export function LoginForm() {
       await login(email, password);
     } catch (err) {
       setLoading(false);
-      throw err; 
+      throw err;
     }
   };
 
@@ -44,7 +44,7 @@ export function LoginForm() {
       await loginWithGoogle();
     } catch (err) {
       setLoading(false);
-      throw err; 
+      throw err;
     }
   };
 

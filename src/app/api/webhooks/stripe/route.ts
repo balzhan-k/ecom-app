@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { initializeFirebaseAdmin } from "@/lib/firebase-admin";
 import admin from "firebase-admin";
+import { resend, FROM_EMAIL } from "@/lib/resend";
+import OrderConfirmationEmail from "@/emails/OrderConfirmation";
 
 const db = initializeFirebaseAdmin();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-07-30.basil",
 });
-
 
 async function getRawBody(request: NextRequest): Promise<string> {
   const chunks: Uint8Array[] = [];
@@ -85,13 +86,12 @@ export async function POST(request: NextRequest) {
   }
 }
 
-
 async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session
 ) {
   try {
     const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
-      expand: ["line_items", "line_items.data.price.product"], 
+      expand: ["line_items", "line_items.data.price.product"],
     });
 
     await updateProductStock(fullSession);
@@ -103,23 +103,26 @@ async function handleCheckoutSessionCompleted(
       const customerEmail = session.customer_details?.email;
       if (customerEmail && orderData) {
         try {
-          await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/emails/order`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: customerEmail,
+          const { data, error } = await resend.emails.send({
+            from: FROM_EMAIL,
+            to: [customerEmail],
+            subject: `Your MiniCom Order Confirmation #${orderData.sessionId.substring(0, 8)}`,
+            react: OrderConfirmationEmail({
               orderId: orderData.sessionId,
               items: orderData.items,
               totalAmount: orderData.totalAmount,
               currency: orderData.currency,
             }),
           });
+
+          if (error) {
+            console.error("Resend order confirmation email error:", error);
+          }
         } catch (error) {
           console.error("❌ Failed to send order confirmation email:", error);
         }
       }
-    } 
-
+    }
   } catch (error) {
     console.error("❌ Error processing order:", error);
     throw error;
@@ -137,7 +140,7 @@ async function updateProductStock(session: Stripe.Checkout.Session) {
   for (const lineItem of session.line_items.data) {
     try {
       const stripeProduct = lineItem.price?.product as Stripe.Product;
-      const productId = stripeProduct?.id; 
+      const productId = stripeProduct?.id;
 
       if (!productId) {
         console.warn(
@@ -154,7 +157,7 @@ async function updateProductStock(session: Stripe.Checkout.Session) {
         .where("stripeProductId", "==", productId)
         .limit(1)
         .get();
-      const productDoc = productQuery.docs[0]; 
+      const productDoc = productQuery.docs[0];
 
       if (!productDoc?.exists) {
         console.warn(
@@ -166,13 +169,12 @@ async function updateProductStock(session: Stripe.Checkout.Session) {
       const productRef = productDoc.ref;
       const productData = productDoc.data();
       const currentStock = productData?.stock || 0;
-      const newStock = Math.max(0, currentStock - quantity); 
+      const newStock = Math.max(0, currentStock - quantity);
 
       batch.update(productRef, {
         stock: newStock,
         "meta.updatedAt": new Date().toISOString(),
       });
-
     } catch (error) {
       console.error("❌ Error updating product:", error);
     }
@@ -207,7 +209,7 @@ async function saveOrderToHistory(
             .get();
           if (productQuery.docs.length > 0) {
             const productDoc = productQuery.docs[0];
-            firebaseProductId = productDoc.id; 
+            firebaseProductId = productDoc.id;
             const productData = productDoc.data();
             firebaseProductName =
               productData?.title || stripeProduct?.name || "Unknown Product";
@@ -215,10 +217,10 @@ async function saveOrderToHistory(
         }
 
         return {
-          productId: firebaseProductId || stripeProduct?.id || "unknown", 
+          productId: firebaseProductId || stripeProduct?.id || "unknown",
           productName: firebaseProductName,
           quantity: lineItem.quantity || 0,
-          price: (lineItem.price?.unit_amount || 0) / 100, 
+          price: (lineItem.price?.unit_amount || 0) / 100,
           totalPrice:
             ((lineItem.price?.unit_amount || 0) * (lineItem.quantity || 0)) /
             100,
@@ -230,7 +232,7 @@ async function saveOrderToHistory(
       userId,
       sessionId: session.id,
       items,
-      totalAmount: (session.amount_total || 0) / 100, 
+      totalAmount: (session.amount_total || 0) / 100,
       currency: session.currency || "usd",
       status: "completed",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -238,7 +240,7 @@ async function saveOrderToHistory(
     };
 
     await db.collection("orders").add(orderData);
-    return orderData; 
+    return orderData;
   } catch (error) {
     console.error("❌ Error saving order:", error);
     throw error;
