@@ -37,20 +37,20 @@ const mockProduct: Product = {
 };
 
 describe("ProductCard", () => {
-  test("рендерит ссылку с правильным href", () => {
+  test("renders link with correct href", () => {
     render(<ProductCard product={mockProduct} />);
 
     const link = screen.getByRole("link");
     expect(link).toHaveAttribute("href", "/categories/products/101");
   });
 
-  test("рендерит заголовок продукта из ProductCardBase", () => {
+  test("renders product title from ProductCardBase", () => {
     render(<ProductCard product={mockProduct} />);
 
     expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
   });
 
-  test("совпадает со снапшотом", () => {
+  test("matches snapshot", () => {
     const { asFragment } = render(<ProductCard product={mockProduct} />);
 
     expect(asFragment()).toMatchSnapshot();
