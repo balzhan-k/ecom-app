@@ -252,6 +252,7 @@ exports[`Header matches snapshot when user is not logged in 1`] = `
           >
             <a
               class="flex items-center gap-2 text-cyan-800 hover:text-cyan-600 transition-colors"
+              data-testid="login-link"
               href="/login"
             >
               <svg

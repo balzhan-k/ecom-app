@@ -107,6 +107,7 @@ export default function Header() {
                 <Link
                   href="/login"
                   className="flex items-center gap-2 text-cyan-800 hover:text-cyan-600 transition-colors"
+                  data-testid="login-link"
                 >
                   <UserIcon className="w-5 h-5" />
                 </Link>

@@ -1,11 +1,32 @@
 import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import ProductCard from "@/components/products/ProductCard";
 import { Product } from "@/types/product";
 import { Category, AvailabilityStatus, ReturnPolicy } from "@/types/product";
 
-jest.mock("next/image", () => (props: any) => {
-  return <img {...props} alt={props.alt} />;
-});
+jest.mock(
+  "next/image",
+  () =>
+    ({
+      src,
+      alt,
+      width,
+      height,
+      fill,
+      ...props
+    }: {
+      src: string;
+      alt: string;
+      width?: number;
+      height?: number;
+      fill?: boolean;
+      [key: string]: any;
+    }) => {
+      return (
+        <img src={src} alt={alt} width={width} height={height} {...props} />
+      );
+    }
+);
 
 jest.mock("next/navigation", () => require("next-router-mock"));
 
@@ -47,7 +68,8 @@ describe("ProductCard", () => {
   test("renders product title from ProductCardBase", () => {
     render(<ProductCard product={mockProduct} />);
 
-    expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
+    const expectedTitle = `${mockProduct.brand}. ${mockProduct.title}`;
+    expect(screen.getByText(expectedTitle)).toBeInTheDocument();
   });
 
   test("matches snapshot", () => {

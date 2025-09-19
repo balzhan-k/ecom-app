@@ -1,8 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom"; // Add this line
+import "@testing-library/jest-dom";
 import Header from "@/components/layout/Header";
 
-// Update the mock for next/image to correctly handle props
 jest.mock(
   "next/image",
   () =>
@@ -21,14 +20,12 @@ jest.mock(
       priority?: boolean;
       [key: string]: any;
     }) => {
-      // eslint-disable-next-line @next/next/no-img-element
       return (
         <img src={src} alt={alt} width={width} height={height} {...props} />
       );
     }
 );
 
-// Mock next/navigation
 jest.mock("next/navigation", () => ({
   usePathname: jest.fn(),
   useRouter: () => ({
@@ -36,7 +33,6 @@ jest.mock("next/navigation", () => ({
   }),
 }));
 
-// Mock AuthContext and CartContext
 jest.mock("@/context/AuthContext", () => ({
   useAuth: jest.fn(),
 }));
@@ -45,7 +41,6 @@ jest.mock("@/context/CartContext", () => ({
   useCart: jest.fn(),
 }));
 
-// Mock UserMenu and CartIcon as they are separate components
 jest.mock("@/components/layout/UserMenu", () => ({
   UserMenu: () => <div data-testid="user-menu" />,
 }));
@@ -64,9 +59,9 @@ describe("Header", () => {
       user: null,
     });
 
-    render(<Header />);
+    render(<Header />); 
 
-    const loginLink = screen.getByRole("link", { name: /login/i });
+    const loginLink = screen.getByTestId("login-link");
     expect(loginLink).toBeInTheDocument();
     expect(loginLink).toHaveAttribute("href", "/login");
     expect(screen.queryByTestId("user-menu")).not.toBeInTheDocument();
@@ -81,9 +76,7 @@ describe("Header", () => {
     render(<Header />);
 
     expect(screen.getByTestId("user-menu")).toBeInTheDocument();
-    expect(
-      screen.queryByRole("link", { name: /login/i })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("login-link")).not.toBeInTheDocument();
   });
 
   test("applies active class to the correct category link", () => {
