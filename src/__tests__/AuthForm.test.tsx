@@ -8,7 +8,7 @@ const onGoogleAuthMock = jest.fn();
 const loadingMock = false;
 
 describe("AuthForm", () => {
-  it("snapshot for login form", () => {
+  test("snapshot for login form", () => {
     render(
       <AuthForm
         type={"login"}
@@ -19,7 +19,7 @@ describe("AuthForm", () => {
     );
     expect(screen.getByTestId("auth-form")).toMatchSnapshot();
   });
-  it("snapshot for register form", () => {
+  test("snapshot for register form", () => {
     render(
       <AuthForm
         type={"register"}
@@ -37,7 +37,7 @@ describe("AuthForm", () => {
   });
 
   describe("Login form", () => {
-    it("renders login form correctly", () => {
+    test("renders login form correctly", () => {
       render(
         <AuthForm
           type={"login"}
@@ -61,7 +61,7 @@ describe("AuthForm", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("calls onSubmit with email and password on form submission", async () => {
+    test("calls onSubmit with email and password on form submission", async () => {
       const user = userEvent.setup();
       render(
         <AuthForm
@@ -83,7 +83,7 @@ describe("AuthForm", () => {
       expect(onSubmitMock).toHaveBeenCalledTimes(1);
     });
 
-    it("shows an error if email or password fields are empty", async () => {
+    test("shows an error if email or password fields are empty", async () => {
       const user = userEvent.setup();
       render(
         <AuthForm
@@ -104,7 +104,7 @@ describe("AuthForm", () => {
   });
 
   describe("Register form", () => {
-    it("renders register form correctly", () => {
+    test("renders register form correctly", () => {
       render(
         <AuthForm
           type={"register"}
@@ -127,7 +127,7 @@ describe("AuthForm", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("shows an error if passwords do not match", async () => {
+    test("shows an error if passwords do not match", async () => {
       const user = userEvent.setup();
       render(
         <AuthForm
@@ -147,7 +147,7 @@ describe("AuthForm", () => {
       expect(onSubmitMock).not.toHaveBeenCalled();
     });
 
-    it("shows an error if password is too short during registration", async () => {
+    test("shows an error if password is too short during registration", async () => {
       const user = userEvent.setup();
       render(
         <AuthForm
@@ -171,7 +171,7 @@ describe("AuthForm", () => {
   });
 
   describe("General error handling", () => {
-    it("shows a general error message if onSubmit fails", async () => {
+    test("shows a general error message if onSubmit fails", async () => {
       const user = userEvent.setup();
       onSubmitMock.mockImplementationOnce(() => {
         throw new Error("Test error message");
@@ -196,7 +196,7 @@ describe("AuthForm", () => {
   });
 
   describe("Loading state", () => {
-    it("disables buttons and shows loading text", () => {
+    test("disables buttons and shows loading text", () => {
       render(
         <AuthForm
           type="login"

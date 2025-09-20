@@ -1,0 +1,173 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`UserMenu matches snapshot for admin user when menu is open 1`] = `
+<DocumentFragment>
+  <div
+    class="relative"
+  >
+    <button
+      class="flex items-center gap-2 text-cyan-800 hover:text-cyan-600 transition-colors"
+    >
+      <svg
+        aria-hidden="true"
+        class="w-5 h-5"
+        data-slot="icon"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <span
+        class="font-medium"
+      >
+        admin@example.com
+      </span>
+      <svg
+        aria-hidden="true"
+        class="w-4 h-4 transition-transform rotate-180"
+        data-slot="icon"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+    <div
+      class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50"
+    >
+      <div
+        class="py-1"
+      >
+        <div
+          class="px-4 py-2 text-sm text-gray-700 border-b border-gray-100"
+        >
+          <div
+            class="font-medium"
+          >
+            admin@example.com
+          </div>
+          <div
+            class="text-xs text-gray-500 capitalize"
+          >
+            admin
+          </div>
+        </div>
+        <button
+          class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+        >
+          Admin Dashboard
+        </button>
+        <div
+          class="border-t border-gray-100"
+        >
+          <button
+            class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+          >
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UserMenu matches snapshot for regular user when menu is open 1`] = `
+<DocumentFragment>
+  <div
+    class="relative"
+  >
+    <button
+      class="flex items-center gap-2 text-cyan-800 hover:text-cyan-600 transition-colors"
+    >
+      <svg
+        aria-hidden="true"
+        class="w-5 h-5"
+        data-slot="icon"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <span
+        class="font-medium"
+      >
+        user@example.com
+      </span>
+      <svg
+        aria-hidden="true"
+        class="w-4 h-4 transition-transform rotate-180"
+        data-slot="icon"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+    <div
+      class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50"
+    >
+      <div
+        class="py-1"
+      >
+        <div
+          class="px-4 py-2 text-sm text-gray-700 border-b border-gray-100"
+        >
+          <div
+            class="font-medium"
+          >
+            user@example.com
+          </div>
+          <div
+            class="text-xs text-gray-500 capitalize"
+          >
+            user
+          </div>
+        </div>
+        <button
+          class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+        >
+          My Orders
+        </button>
+        <div
+          class="border-t border-gray-100"
+        >
+          <button
+            class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+          >
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -23,18 +23,21 @@ export default function SelectField({
   onChange,
   error,
 }: SelectFieldProps) {
-  const selected = options.find((opt) => opt.value === value) || options[0];
+  const selectedOption = options.find((opt) => opt.value === value);
 
   return (
     <div className="flex flex-col mb-4">
       <label htmlFor={id} className="text-cyan-700 font-semibold mb-2">
         {label}
       </label>
-      <Listbox value={selected.value} onChange={onChange}>
+      <Listbox
+        value={selectedOption ? selectedOption.value : null}
+        onChange={onChange}
+      >
         <div className="relative">
           <ListboxButton className="bg-slate-100 text-gray-800 rounded-lg border border-cyan-300 px-4 py-3 w-full text-left flex justify-between items-center focus:outline-none focus:border-cyan-500 transition">
-            {value ? (
-              selected.label
+            {selectedOption ? (
+              selectedOption.label
             ) : (
               <span className="text-gray-400">
                 Select {label.toLowerCase()}

@@ -18,7 +18,7 @@ describe("CartContext", () => {
     localStorage.clear(); 
   });
 
-  it("adds item to cart", () => {
+  test("adds item to cart", () => {
     const { result } = renderHook(() => useCart(), { wrapper });
 
     act(() => {
@@ -32,7 +32,7 @@ describe("CartContext", () => {
     });
   });
 
-  it("increases quantity of an existing item", () => {
+  test("increases quantity of an existing item", () => {
     const { result } = renderHook(() => useCart(), { wrapper });
 
     act(() => {
@@ -43,7 +43,7 @@ describe("CartContext", () => {
     expect(result.current.cart[0].quantity).toBe(2);
   });
 
-  it("decreases quantity but not below 1", () => {
+  test("decreases quantity but not below 1", () => {
     const { result } = renderHook(() => useCart(), { wrapper });
 
     act(() => {
@@ -60,7 +60,7 @@ describe("CartContext", () => {
     expect(result.current.cart[0].quantity).toBe(1);
   });
 
-  it("removes item from cart", () => {
+  test("removes item from cart", () => {
     const { result } = renderHook(() => useCart(), { wrapper });
 
     act(() => {
@@ -71,7 +71,7 @@ describe("CartContext", () => {
     expect(result.current.cart).toHaveLength(0);
   });
 
-  it("clears the entire cart", () => {
+  test("clears the entire cart", () => {
     const { result } = renderHook(() => useCart(), { wrapper });
 
     act(() => {
@@ -86,7 +86,7 @@ describe("CartContext", () => {
     expect(result.current.cart).toHaveLength(0);
   });
 
-  it("calculates total items correctly", () => {
+  test("calculates total items correctly", () => {
     const { result } = renderHook(() => useCart(), { wrapper });
 
     act(() => {
@@ -100,7 +100,7 @@ describe("CartContext", () => {
     expect(result.current.getTotalItems()).toBe(5);
   });
 
-  it("calculates total price correctly", () => {
+  test("calculates total price correctly", () => {
     const { result } = renderHook(() => useCart(), { wrapper });
 
     act(() => {
