@@ -1,7 +1,6 @@
 import admin from "firebase-admin";
 import type { ServiceAccount } from "firebase-admin";
 
-// Инициализация Firebase Admin SDK
 export function initializeFirebaseAdmin() {
   if (!admin.apps.length) {
     if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {

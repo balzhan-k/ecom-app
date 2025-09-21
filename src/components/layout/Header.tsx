@@ -23,7 +23,7 @@ export default function Header() {
               className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
             >
               <Image
-                src="/logo.jpg"
+                src="/logo-brand-header.jpg"
                 alt="MiniCom Logo"
                 width={0}
                 height={0}
@@ -90,12 +90,10 @@ export default function Header() {
               Organizers
             </Link>
 
-            {/* Поиск */}
             <SearchInput size="md" />
           </nav>
 
           <div className="flex items-center gap-3">
-            {/* Поиск для мобильных/планшетов */}
             <SearchInput
               size="sm"
               placeholder="Search..."
@@ -103,13 +101,13 @@ export default function Header() {
             />
 
             <div className="hidden md:flex items-center gap-5">
-
               {user ? (
                 <UserMenu />
               ) : (
                 <Link
                   href="/login"
                   className="flex items-center gap-2 text-cyan-800 hover:text-cyan-600 transition-colors"
+                  data-testid="login-link"
                 >
                   <UserIcon className="w-5 h-5" />
                 </Link>

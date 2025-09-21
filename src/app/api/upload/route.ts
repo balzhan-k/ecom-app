@@ -1,16 +1,23 @@
 import { put } from "@vercel/blob";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
-  const file = formData.get("file") as File;
+  const file = formData.get("file");
 
-  if (!file) return new Response("No file uploaded", { status: 400 });
+  // Проверяем, что полученные данные - это действительно файл
+  if (!(file instanceof File)) {
+    return NextResponse.json(
+      { error: "No file uploaded." },
+      { status: 400 }
+    );
+  }
 
+  // Теперь TypeScript уверен, что у `file` есть свойство .name
   const blob = await put(file.name, file, {
     access: "public",
-    addRandomSuffix: true, 
+    addRandomSuffix: true,
   });
 
-  return Response.json(blob);
+  return NextResponse.json(blob);
 }

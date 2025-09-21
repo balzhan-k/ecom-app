@@ -1,4 +1,3 @@
-// src/components/Providers.tsx
 "use client";
 
 import { CartProvider } from "@/context/CartContext";

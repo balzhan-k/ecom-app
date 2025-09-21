@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef, useState } from "react";
 import Image from "next/image";
 
@@ -26,7 +28,7 @@ export default function ImageUploadField({
       filesArray.map(async (file) => {
         if (!acceptedFileTypes.includes(file.type)) {
           alert("Only JPEG, JPG, or WEBP files can be uploaded.");
-          return null; // Return null for invalid file types
+          return null;
         }
 
         const localUrl = URL.createObjectURL(file);
@@ -68,28 +70,32 @@ export default function ImageUploadField({
   return (
     <div>
       <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 transition-colors">
-        {/* Кнопка для выбора файлов */}
-        <input
-          type="file"
-          id="photoUpload"
-          accept={acceptedFileTypes.join(",")}
-          className="hidden"
-          ref={inputRef}
-          onChange={handleFileChange}
-          multiple
-        />
-        <button
-          type="button"
-          className="mb-4 px-4 py-2 bg-slate-200 text-sky-950 rounded shadow hover:bg-slate-300 font-semibold"
-          onClick={() => inputRef.current?.click()}
+        <label
+          htmlFor="photoUpload"
+          className="flex flex-col items-center cursor-pointer"
         >
-          {previewUrls.length === 0 ? "Upload Photo(s)" : "Add More Photos"}
-        </button>
+          <input
+            type="file"
+            id="photoUpload"
+            data-testid="photoUpload" // 
+            accept={acceptedFileTypes.join(",")}
+            className="hidden"
+            ref={inputRef}
+            onChange={handleFileChange}
+            multiple
+          />
+          <button
+            type="button"
+            className="mb-4 px-4 py-2 bg-slate-200 text-sky-950 rounded shadow hover:bg-slate-300 font-semibold"
+            onClick={() => inputRef.current?.click()}
+          >
+            {previewUrls.length === 0 ? "Upload Photo(s)" : "Add More Photos"}
+          </button>
+        </label>
         <p className="text-xs text-gray-500 mb-2">
           {hintText} You can upload multiple photos.
         </p>
 
-        {/* Превьюшки */}
         {previewUrls.length > 0 && (
           <div className="grid grid-cols-2 gap-4 w-full mb-4">
             {previewUrls.map((url, idx) => (

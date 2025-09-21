@@ -12,7 +12,6 @@ export default function ClearCartOnMount() {
       hasClearedRef.current = true;
       clearCart();
     }
-    // Run only once on mount
   }, [clearCart]);
 
   return null;

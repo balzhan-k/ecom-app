@@ -113,7 +113,6 @@ export async function getRandomProducts(count: number = 4): Promise<Product[]> {
   try {
     const allProducts = await getAllProducts();
 
-    // Перемешиваем массив товаров и берем первые count элементов
     const shuffled = allProducts.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
   } catch (error) {
@@ -128,12 +127,10 @@ export async function getDiscountedProducts(
   try {
     const allProducts = await getAllProducts();
 
-    // Фильтруем товары со скидкой (discountPercentage > 0)
     const discountedProducts = allProducts.filter(
       (product) => (product.discountPercentage ?? 0) > 0
     );
 
-    // Перемешиваем и берем нужное количество
     const shuffled = discountedProducts.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
   } catch (error) {

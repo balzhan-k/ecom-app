@@ -16,7 +16,7 @@ export interface CheckoutItem {
 
 export async function createCheckoutSession(
   items: CheckoutItem[],
-  userId?: string, // Добавлен userId
+  userId?: string, 
   origin?: string
 ) {
   try {
@@ -37,7 +37,7 @@ export async function createCheckoutSession(
         !productData ||
         typeof productData.price !== "number" ||
         typeof productData.title !== "string" ||
-        typeof productData.stripePriceId !== "string" // Добавлена проверка на stripePriceId
+        typeof productData.stripePriceId !== "string" 
       ) {
         throw new Error(
           `Invalid product data for ID ${productId}. Missing price or title.`
@@ -45,7 +45,7 @@ export async function createCheckoutSession(
       }
 
       lineItems.push({
-        price: productData.stripePriceId, // Используем stripePriceId
+        price: productData.stripePriceId, 
         quantity: quantity,
       });
     }
@@ -59,7 +59,7 @@ export async function createCheckoutSession(
       mode: "payment",
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/cancel`,
-      ...(userId && { metadata: { userId } }), // Условно добавляем userId в метаданные
+      ...(userId && { metadata: { userId } }),
     });
 
     return {

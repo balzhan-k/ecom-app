@@ -1,7 +1,5 @@
-// src/utils/productForm.ts
 import { Category, AvailabilityStatus, ReturnPolicy } from "@/types/product";
 
-// Optional, but helps readability across files
 export type RawProductFormData = {
   id?: string;
   title: string;

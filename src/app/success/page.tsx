@@ -14,9 +14,8 @@ async function ensureOrderSaved(
 ) {
   try {
     const userId = session.metadata?.userId as string | undefined;
-    if (!userId) return; // only save for authenticated users
+    if (!userId) return; 
 
-    // Skip if already saved
     const existing = await db
       .collection("orders")
       .where("sessionId", "==", session.id)
@@ -27,8 +26,8 @@ async function ensureOrderSaved(
     const items = await Promise.all(
       (session.line_items?.data ?? []).map(
         async (lineItem: Stripe.LineItem) => {
-          const price = lineItem.price; // Stripe.Price | null
-          const productRef = price?.product ?? null; // string | Stripe.Product | Stripe.DeletedProduct | null
+          const price = lineItem.price; 
+          const productRef = price?.product ?? null; 
 
           let stripeProductId: string | undefined;
           let firebaseProductName: string = "Unknown Product";
@@ -57,13 +56,12 @@ async function ensureOrderSaved(
                 const productDoc = productQuery.docs[0];
                 const productData = productDoc.data();
                 firebaseProductName = productData?.title || firebaseProductName;
-                // Prefer Firestore doc id when found
                 stripeProductId = productDoc.id;
               }
             }
           }
 
-          const unitAmount = price?.unit_amount ?? 0; // number | null -> number
+          const unitAmount = price?.unit_amount ?? 0; 
           const quantity = lineItem.quantity ?? 0;
 
           return {
@@ -124,14 +122,12 @@ export default async function Success({ searchParams }: SuccessProps) {
     }
 
     if (status === "complete") {
-      // Fallback: save order if webhook hasn't saved it yet
       await ensureOrderSaved(session);
       return (
         <div className="container mt-10 mb-20 mx-auto flex flex-col items-center justify-center max-w-sm lg:max-w-lg">
-          {/* Clear cart when arriving at success page */}
           <ClearCartOnMount />
           <Image
-            src="/shoppingBag.jpg"
+            src="/cart-main-banner.jpg"
             alt="Shopping Bag"
             width={480}
             height={480}

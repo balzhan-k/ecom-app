@@ -40,7 +40,6 @@ export interface ProductFormState {
   };
 }
 
-// Client-only wrapper to prevent SSR issues
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
@@ -152,7 +151,6 @@ function ProductFormContent({ product, mode }: ProductFormProps) {
           formData.append(key, String(v));
         });
       } else {
-        // Handle optional fields - only append if value exists and is not empty
         const optionalFields = [
           "material",
           "color",

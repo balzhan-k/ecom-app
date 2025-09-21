@@ -10,10 +10,10 @@ import {
 
 interface ProductCardBaseProps {
   product: Product;
-  imageHeightClass?: string; // e.g., "h-64" or "h-48"
+  imageHeightClass?: string; 
   showDiscountBadge?: boolean;
   showStock?: boolean;
-  actions?: React.ReactNode; // custom actions area (e.g., Edit/Delete)
+  actions?: React.ReactNode;
 }
 
 export default function ProductCardBase({

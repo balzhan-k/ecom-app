@@ -9,7 +9,6 @@ export function CartIcon() {
   const currentPath = usePathname();
   const { getTotalItems } = useCart();
 
-  // Получаем общее количество товаров в корзине
   const totalItems = getTotalItems();
 
   return (
@@ -23,7 +22,6 @@ export function CartIcon() {
     >
       <ShoppingCartIcon className="w-6 h-6" />
 
-      {/* Счетчик товаров */}
       {totalItems > 0 && (
         <span className="absolute -top-2 -right-2 bg-cyan-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
           {totalItems > 99 ? "99+" : totalItems}

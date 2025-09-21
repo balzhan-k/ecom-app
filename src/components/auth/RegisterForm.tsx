@@ -16,13 +16,11 @@ export function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Автоматическое перенаправление после регистрации
   useEffect(() => {
     if (user && userData && !authLoading) {
       if (userData.role === "admin") {
         router.push("/admin");
       } else {
-        // Обычный пользователь идет домой
         router.push("/");
       }
     }
@@ -32,10 +30,9 @@ export function RegisterForm() {
     setLoading(true);
     try {
       await register(email, password);
-      // Перенаправление произойдет автоматически в useEffect
     } catch (err) {
       setLoading(false);
-      throw err; // Передаем ошибку в AuthForm для отображения
+      throw err; 
     }
   };
 
@@ -43,16 +40,15 @@ export function RegisterForm() {
     setLoading(true);
     try {
       await loginWithGoogle();
-      // Перенаправление произойдет автоматически в useEffect
     } catch (err) {
       setLoading(false);
-      throw err; // Передаем ошибку в AuthForm для отображения
+      throw err; 
     }
   };
 
   return (
     <AuthForm
-      mode="register"
+      type="register"
       onSubmit={handleRegister}
       onGoogleAuth={handleGoogleLogin}
       loading={loading || authLoading}

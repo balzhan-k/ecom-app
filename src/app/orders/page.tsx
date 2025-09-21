@@ -131,7 +131,6 @@ export default function OrdersPage() {
                       key={idx}
                       className="flex items-center border-b border-gray-200 pb-3 last:border-b-0"
                     >
-                      {/* thumbnail */}
                       {item.thumbnail ? (
                         <Image
                           src={item.thumbnail}

@@ -69,7 +69,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await setDoc(userRef, newUserData);
       setUserData(newUserData);
 
-      // Send welcome email for new users
       try {
         fetch("/api/emails/welcome", {
           method: "POST",
