@@ -12,9 +12,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center px-4 md:px-10">
             <div className="space-y-6 ">
               <h1 className="text-4xl lg:text-6xl font-bold text-cyan-700 leading-tight">
-                Elevate Your
-                <br />
-                Workspace
+                Elevate Your Workspace
               </h1>
               <p className="text-lg lg:text-xl text-cyan-700 leading-relaxed max-w-md">
                 Discover our curated collection of beautiful and functional
