@@ -50,9 +50,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 
 const mockUsePathname = usePathname as jest.Mock;
-const mockUseRouter = useRouter as jest.Mock;
 const mockUseAuth = useAuth as jest.Mock;
-const mockUseCart = useCart as jest.Mock;
 
 describe("Header", () => {
   test("renders login link when user is not logged in", () => {
