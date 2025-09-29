@@ -15,7 +15,9 @@ jest.mock("@/context/AuthContext", () => ({
   useAuth: jest.fn(),
 }));
 
-const mockUseAuth = require("@/context/AuthContext").useAuth;
+// Импортируем мокированную версию useAuth и приводим ее к типу Jest.Mock
+import { useAuth } from "@/context/AuthContext"; // Импортируем useAuth
+const mockUseAuth = useAuth as jest.Mock; // Приводим к типу Jest.Mock
 
 describe("UserMenu", () => {
   beforeEach(() => {
