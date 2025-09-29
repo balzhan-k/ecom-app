@@ -4,31 +4,27 @@ import ProductCard from "@/components/products/ProductCard";
 import { Product } from "@/types/product";
 import { Category, AvailabilityStatus, ReturnPolicy } from "@/types/product";
 
-jest.mock(
-  "next/image",
-  () =>
-    ({
-      src,
-      alt,
-      width,
-      height,
-      fill,
-      ...props
-    }: {
-      src: string;
-      alt: string;
-      width?: number;
-      height?: number;
-      fill?: boolean;
-      [key: string]: any;
-    }) => {
-      return (
-        <img src={src} alt={alt} width={width} height={height} {...props} />
-      );
-    }
-);
+jest.mock("next/image", () => {
+  const Image = ({
+    src,
+    alt,
+    width,
+    height,
+    ...props
+  }: {
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
+    [key: string]: any; 
+  }) => {
+    return <img src={src} alt={alt} width={width} height={height} {...props} />;
+  };
+  Image.displayName = "Image";
+  return Image;
+});
 
-jest.mock("next/navigation", () => require("next-router-mock"));
+jest.mock("next/navigation", () => import("next-router-mock"));
 
 const mockProduct: Product = {
   id: "101",

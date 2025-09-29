@@ -103,7 +103,7 @@ async function handleCheckoutSessionCompleted(
       const customerEmail = session.customer_details?.email;
       if (customerEmail && orderData) {
         try {
-          const { data, error } = await resend.emails.send({
+          const { error } = await resend.emails.send({
             from: FROM_EMAIL,
             to: [customerEmail],
             subject: `Your MiniCom Order Confirmation #${orderData.sessionId.substring(0, 8)}`,
