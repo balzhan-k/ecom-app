@@ -45,9 +45,8 @@ jest.mock("@/components/layout/CartIcon", () => ({
   CartIcon: () => <div data-testid="cart-icon" />,
 }));
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { useCart } from "@/context/CartContext";
 
 const mockUsePathname = usePathname as jest.Mock;
 const mockUseAuth = useAuth as jest.Mock;

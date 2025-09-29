@@ -16,7 +16,7 @@ jest.mock("next/image", () => {
     alt: string;
     width?: number;
     height?: number;
-    [key: string]: any; 
+    [key: string]: any;
   }) => {
     return <img src={src} alt={alt} width={width} height={height} {...props} />;
   };
