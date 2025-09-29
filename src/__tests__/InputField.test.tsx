@@ -1,11 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import userEvent from "@testing-library/user-event";
 import InputField from "@/components/common/InputField";
-import { useForm } from "react-hook-form";
+import { useForm, FieldError } from "react-hook-form";
 import { FC } from "react";
 
-const TestHost: FC<{ type?: string; error?: any }> = ({ type, error }) => {
+const TestHost: FC<{ type?: string; error?: FieldError }> = ({
+  type,
+  error,
+}) => {
   const { register } = useForm();
   return (
     <InputField

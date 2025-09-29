@@ -2,29 +2,25 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Header from "@/components/layout/Header";
 
-jest.mock(
-  "next/image",
-  () =>
-    ({
-      src,
-      alt,
-      width,
-      height,
-      priority,
-      ...props
-    }: {
-      src: string;
-      alt: string;
-      width?: number;
-      height?: number;
-      priority?: boolean;
-      [key: string]: any;
-    }) => {
-      return (
-        <img src={src} alt={alt} width={width} height={height} {...props} />
-      );
-    }
-);
+jest.mock("next/image", () => {
+  const MockImage = ({
+    src,
+    alt,
+    width,
+    height,
+    ...props
+  }: {
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
+    [key: string]: any; 
+  }) => {
+    return <img src={src} alt={alt} width={width} height={height} {...props} />;
+  };
+  MockImage.displayName = "Image";
+  return MockImage;
+});
 
 jest.mock("next/navigation", () => ({
   usePathname: jest.fn(),
@@ -49,8 +45,14 @@ jest.mock("@/components/layout/CartIcon", () => ({
   CartIcon: () => <div data-testid="cart-icon" />,
 }));
 
-const mockUsePathname = require("next/navigation").usePathname;
-const mockUseAuth = require("@/context/AuthContext").useAuth;
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
+
+const mockUsePathname = usePathname as jest.Mock;
+const mockUseRouter = useRouter as jest.Mock;
+const mockUseAuth = useAuth as jest.Mock;
+const mockUseCart = useCart as jest.Mock;
 
 describe("Header", () => {
   test("renders login link when user is not logged in", () => {
@@ -59,7 +61,7 @@ describe("Header", () => {
       user: null,
     });
 
-    render(<Header />); 
+    render(<Header />);
 
     const loginLink = screen.getByTestId("login-link");
     expect(loginLink).toBeInTheDocument();

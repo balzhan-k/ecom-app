@@ -1,6 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import MobileTabBar from "@/components/layout/MobileTabBar";
+import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 
 jest.mock("next/navigation", () => ({
   usePathname: jest.fn(),
@@ -17,9 +20,9 @@ jest.mock("@/context/CartContext", () => ({
   useCart: jest.fn(),
 }));
 
-const mockUsePathname = require("next/navigation").usePathname;
-const mockUseAuth = require("@/context/AuthContext").useAuth;
-const mockUseCart = require("@/context/CartContext").useCart;
+const mockUsePathname = usePathname as jest.Mock;
+const mockUseAuth = useAuth as jest.Mock;
+const mockUseCart = useCart as jest.Mock;
 
 describe("MobileTabBar", () => {
   it("renders correctly for a non-logged-in user", () => {

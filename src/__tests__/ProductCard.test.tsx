@@ -16,8 +16,9 @@ jest.mock("next/image", () => {
     alt: string;
     width?: number;
     height?: number;
-    [key: string]: any; 
-  }) => {
+    [key: string]: any;
+  }) => {3
+
     return <img src={src} alt={alt} width={width} height={height} {...props} />;
   };
   Image.displayName = "Image";
