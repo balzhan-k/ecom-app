@@ -39,7 +39,7 @@ export default function ProductPage({
   }, [params]);
 
   if (loading) {
-    return null; 
+    return null;
   }
 
   if (!product) {
@@ -80,7 +80,11 @@ export default function ProductPage({
 
   return (
     <div className="py-8 pb-20">
-      <h1 className="text-2xl font-bold text-cyan-700 mb-4">{product.brand}{'. '}{product.title}</h1>
+      <h1 className="text-2xl font-bold text-cyan-700 mb-4">
+        {product.brand}
+        {". "}
+        {product.title}
+      </h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="relative h-100">
           <Image
@@ -90,10 +94,14 @@ export default function ProductPage({
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover rounded-lg"
           />
+          {(product.discountPercentage ?? 0) > 0 && (
+            <div className="absolute top-2 right-2 bg-rose-500 text-white px-2 py-1 rounded text-lg font-bold">
+              -{product.discountPercentage}%
+            </div>
+          )}
         </div>
 
         <div>
-         
           <p className="text-gray-600 mb-4">{product.description}</p>
 
           <div className="flex items-center gap-2 mb-6">
